@@ -1,0 +1,43 @@
+{
+  "expo": {
+    "name": "pal-hive",
+    "slug": "pal-hive",
+    "scheme": "pal-hive",
+    "version": "0.0.1",
+    "orientation": "portrait",
+    "description": "Easily track daily expenses in multiple languages and currencies.",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.maxxdevs.pal-hive"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "bundleIdentifier": "com.maxxdevs.pal-hive"
+    },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    },
+    "owner": "pratham-jaiswal"
+  }
+}
