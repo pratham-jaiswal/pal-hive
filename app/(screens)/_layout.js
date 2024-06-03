@@ -60,6 +60,20 @@ export default function TabLayout() {
           headerShadowVisible: false,
         }}
       />
+      <Stack.Screen
+        name="users/[account]"
+        options={({ route }) => ({
+          headerTitle: `@${route.params.account}`,
+          headerStyle: { backgroundColor: "#5AB2FF" },
+          headerTitleStyle: {
+            fontStyle: "italic",
+            fontFamily: "monospace",
+          },
+          contentStyle: { backgroundColor: "#5AB2FF" },
+          headerShown: true,
+          headerShadowVisible: false,
+        })}
+      />
     </Stack>
   );
 }
