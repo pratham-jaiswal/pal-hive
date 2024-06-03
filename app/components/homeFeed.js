@@ -2,8 +2,32 @@ import { Image, StyleSheet, Text, View, Pressable } from "react-native";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
+import Markdown from "react-native-markdown-display";
+import { useEffect, useState } from "react";
 
-function Post({ item, accountData, followUser }) {
+function Post({
+  item,
+  accountData,
+  followUser,
+  setAccountData,
+  showFollow,
+  allAccountData,
+  likePost,
+}) {
+  const [liked, setLiked] = useState(false);
+
+  useEffect(() => {
+    setLiked(item.likedBy.includes(accountData.username));
+  }, [item, accountData.username]);
+
+  const likeIcon = liked ? "heart" : "heart-outline";
+  const likeColor = liked ? "red" : "black";
+
+  const handleLikePress = () => {
+    setLiked(!liked);
+    likePost(item.id);
+  };
+
   return (
     <View style={styles.postContainer}>
       <View style={styles.postTop}>
@@ -12,7 +36,13 @@ function Post({ item, accountData, followUser }) {
           onPress={() =>
             router.push({
               pathname: "/(screens)/users/[account]",
-              params: { account: item.username },
+              params: {
+                account: item.username,
+                userData: JSON.stringify(accountData),
+                followUser: followUser,
+                setAccountData: setAccountData,
+                allAccountData: JSON.stringify(allAccountData),
+              },
             })
           }
         >
@@ -20,23 +50,25 @@ function Post({ item, accountData, followUser }) {
             <Image
               style={styles.pfpImage}
               alt={item.title}
-              source={{ uri: item.pfpUri }}
+              source={{ uri: `https://robohash.org/${item.username}?set=set3` }}
               resizeMode="contain"
             />
           </View>
           <Text style={styles.username}>@{item.username}</Text>
         </Pressable>
         <View style={styles.postTopActions}>
-          <Pressable
-            style={styles.followBtn}
-            onPress={() => followUser(item.username)}
-          >
-            <Text>
-              {accountData.following.includes(item.username)
-                ? "Following"
-                : "Follow"}
-            </Text>
-          </Pressable>
+          {showFollow && (
+            <Pressable
+              style={styles.followBtn}
+              onPress={() => followUser(item.username)}
+            >
+              <Text>
+                {accountData.following.includes(item.username)
+                  ? "Following"
+                  : "Follow"}
+              </Text>
+            </Pressable>
+          )}
           <Pressable>
             <Ionicons
               name="ellipsis-vertical"
@@ -51,108 +83,91 @@ function Post({ item, accountData, followUser }) {
           </Pressable>
         </View>
       </View>
-      <View style={styles.postImageContainer}>
-        <Image
-          style={styles.postImage}
-          alt={item.title}
-          source={{ uri: item.postUri }}
-          resizeMode="contain"
-        />
+      <View style={styles.postTextContainer}>
+        <Markdown>{item.postText}</Markdown>
+      </View>
+      <View style={styles.actionsContainer}>
+        <Pressable onPress={handleLikePress}>
+          <Ionicons name={likeIcon} size={22} color={likeColor} />
+        </Pressable>
+        <Ionicons name="paper-plane-outline" size={22} color="black" />
       </View>
     </View>
   );
 }
 
-export default function HomeFeed({ accountData, setAccountData }) {
-  const posts = [
-    {
-      id: 1,
-      title: "Post 1",
-      postUri: "https://i.imgur.com/khHJxB7.png",
-      username: "pratham1",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 2,
-      title: "Post 2",
-      postUri: "https://i.imgur.com/khHJxB7.png",
-      username: "pratham2",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 3,
-      title: "Post 3",
-      postUri: "https://i.imgur.com/khHJxB7.png",
-      username: "pratham3",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 4,
-      title: "Post 4",
-      postUri: "https://i.imgur.com/uo09s2U.png",
-      username: "pratham4",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 5,
-      title: "Post 5",
-      postUri: "https://i.imgur.com/uo09s2U.png",
-      username: "pratham5",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 6,
-      title: "Post 6",
-      postUri: "https://i.imgur.com/khHJxB7.png",
-      username: "pratham6",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 7,
-      title: "Post 7",
-      postUri: "https://i.imgur.com/khHJxB7.png",
-      username: "pratham7",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 8,
-      title: "Post 8",
-      postUri: "https://i.imgur.com/khHJxB7.png",
-      username: "pratham8",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 9,
-      title: "Post 9",
-      postUri: "https://i.imgur.com/uo09s2U.png",
-      username: "pratham9",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-    {
-      id: 10,
-      title: "Post 10",
-      postUri: "https://i.imgur.com/khHJxB7.png",
-      username: "pratham10",
-      pfpUri: "https://i.imgur.com/uo09s2U.png",
-    },
-  ];
+export default function HomeFeed({
+  allAccountData,
+  setAllAccountData,
+  accountData,
+  setAccountData,
+  posts,
+  showFollow,
+}) {
 
   function followUser(account) {
     setAccountData((prevData) => {
-      if (prevData.following.includes(account)) {
-        return {
-          ...prevData,
-          following: prevData.following.filter((user) => user !== account),
-          followingCount: prevData.followingCount - 1,
-        };
-      } else {
-        return {
-          ...prevData,
-          following: [...prevData.following, account],
-          followingCount: prevData.followingCount + 1,
-        };
-      }
+      const isFollowing = prevData.following.includes(account);
+      const updatedFollowing = isFollowing
+        ? prevData.following.filter((user) => user !== account)
+        : [...prevData.following, account];
+
+      return {
+        ...prevData,
+        following: updatedFollowing,
+        followingCount: isFollowing
+          ? prevData.followingCount - 1
+          : prevData.followingCount + 1,
+      };
     });
+
+    setAllAccountData((prevData) =>
+      prevData.map((user) => {
+        if (user.username === account) {
+          const isFollowedBy = user.followers.includes(accountData.username);
+          const updatedFollowers = isFollowedBy
+            ? user.followers.filter(
+                (follower) => follower !== accountData.username
+              )
+            : [...user.followers, accountData.username];
+
+          return {
+            ...user,
+            followers: updatedFollowers,
+            followerCount: isFollowedBy
+              ? user.followerCount - 1
+              : user.followerCount + 1,
+          };
+        }
+        return user;
+      })
+    );
+  }
+
+  function likePost(postId) {
+    setAllAccountData((prevData) =>
+      prevData.map((user) => {
+        const updatedPosts = user.posts.map((post) => {
+          if (post.id === postId) {
+            const isLiked = post.likedBy.includes(accountData.username);
+            return {
+              ...post,
+              likedBy: isLiked
+                ? post.likedBy.filter(
+                    (username) => username !== accountData.username
+                  )
+                : [...post.likedBy, accountData.username],
+              likeCount: isLiked ? post.likeCount - 1 : post.likeCount + 1,
+            };
+          }
+          return post;
+        });
+        return {
+          ...user,
+          posts: updatedPosts,
+        };
+      })
+    );
   }
 
   return (
@@ -164,13 +179,21 @@ export default function HomeFeed({ accountData, setAccountData }) {
             <Post
               item={item}
               accountData={accountData}
+              setAccountData={setAccountData}
               followUser={followUser}
+              likePost={likePost}
+              showFollow={showFollow}
+              allAccountData={allAccountData}
             />
           );
         }}
         estimatedItemSize={200}
         keyExtractor={(item) => item.id}
-        ListFooterComponent={<View style={styles.footer} />}
+        ListFooterComponent={
+          <View
+            style={[styles.footer, { marginBottom: showFollow ? 0 : 200 }]}
+          />
+        }
       />
     </View>
   );
@@ -182,14 +205,14 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   postContainer: {
-    height: 400,
     width: 300,
     backgroundColor: "#A0DEFF",
-    marginVertical: 25,
+    marginVertical: 10,
     flexDirection: "column",
     alignItems: "center",
     alignSelf: "center",
     borderRadius: 16,
+    elevation: 5,
   },
   postTop: {
     height: 50,
@@ -208,8 +231,8 @@ const styles = StyleSheet.create({
   },
   username: {
     color: "#000",
-    textShadowColor: "#777",
-    textShadowOffset: { width: 0, height: 0 },
+    textShadowColor: "#888",
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 5,
   },
   pfpImageContainer: {
@@ -218,6 +241,8 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginLeft: 10,
     backgroundColor: "#5AB2FF",
+    borderColor: "#FFF9D0",
+    borderWidth: 2,
     justifyContent: "center",
     alignItems: "center",
     elevation: 5,
@@ -243,14 +268,17 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     elevation: 5,
   },
-  postImageContainer: {
-    height: 300,
-    aspectRatio: 1,
-    backgroundColor: "#111",
+  postTextContainer: {
+    width: "100%",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
-  postImage: {
-    height: "100%",
-    aspectRatio: 1,
+  actionsContainer: {
+    flexDirection: "row",
+    gap: 10,
+    width: "100%",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
   },
   footer: {
     height: 75,
