@@ -4,6 +4,7 @@ import { TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { AccountContext } from "../_layout";
+import { View } from "react-native-web";
 
 export default function TabLayout() {
   const { accountData } = useContext(AccountContext);
@@ -118,6 +119,34 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="createPost"
+        options={{
+          headerTitle: "Notifications",
+          headerStyle: { backgroundColor: "#5AB2FF" },
+          headerTitleStyle: {
+            fontFamily: "monospace",
+            color: "#FFF9D0",
+            marginLeft: 5,
+          },
+          headerShown: true,
+          tabBarIcon: (data) => (
+            <Ionicons
+              name="add-circle-outline"
+              size={30}
+              color={data.color}
+              style={[styles.tabIcon ,{
+                backgroundColor: data.focused
+                  ? "rgba(255, 249, 208, 0.8)"
+                  : "transparent",
+                opacity: data.focused ? 1 : 0.9,
+              }]}
+            />
+          ),
+          headerShown: true,
+          headerShadowVisible: false,
+        }}
+      />
+      <Tabs.Screen
         name="notifications"
         options={{
           headerTitle: "Notifications",
@@ -149,7 +178,7 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="account"
+        name="profile"
         options={{
           headerTitle: username,
           headerStyle: { backgroundColor: "#5AB2FF" },
@@ -205,8 +234,8 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabIcon: {
-    height: "50%",
-    width: "50%",
+    width: "60%",
+    aspectRatio: 1,
     textAlign: "center",
     verticalAlign: "middle",
     borderRadius: 16,
