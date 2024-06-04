@@ -81,6 +81,7 @@ export default function Account() {
         showFollow={false}
         followUser={followUser}
         likePost={likePost}
+        footerMarginBottom={150}
       />
     </View>
   );

@@ -31,6 +31,7 @@ export default function Home() {
         showFollow={true}
         followUser={followUser}
         likePost={likePost}
+        footerMarginBottom={0}
       />
     </View>
   );

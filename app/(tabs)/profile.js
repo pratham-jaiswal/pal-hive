@@ -49,6 +49,7 @@ export default function Profile() {
         showFollow={false}
         followUser={followUser}
         likePost={likePost}
+        footerMarginBottom={220}
       />
     </View>
   );

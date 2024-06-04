@@ -93,6 +93,7 @@ export default function HomeFeed({
   showFollow,
   followUser,
   likePost,
+  footerMarginBottom,
 }) {
   return (
     <View style={styles.container}>
@@ -113,7 +114,9 @@ export default function HomeFeed({
         keyExtractor={(item) => item.id}
         ListFooterComponent={
           <View
-            style={[styles.footer, { marginBottom: showFollow ? 0 : 200 }]}
+            style={{
+              height: 100 + footerMarginBottom,
+            }}
           />
         }
       />
@@ -210,8 +213,5 @@ const styles = StyleSheet.create({
   actionCount: {
     fontSize: 15,
     alignSelf: "center",
-  },
-  footer: {
-    height: 100,
   },
 });

@@ -33,7 +33,7 @@ export default function Search() {
   }, [searchTerm, allAccountData, accountData.username]);
 
   const posts = allAccountData.reduce((acc, user) => {
-    if (user.username !== accountData.username) {
+    if (user.username !== accountData.username && !accountData.following.includes(user.username)) {
       const userPosts = user.posts.map((post) => ({
         ...post,
         pfpUri: user.pfpUri,
@@ -84,6 +84,7 @@ export default function Search() {
           showFollow={true}
           followUser={followUser}
           likePost={likePost}
+          footerMarginBottom={50}
         />
       )}
     </View>
