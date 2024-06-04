@@ -45,7 +45,7 @@ export default function UserAccount() {
       </View>
       <HomeFeed
         accountData={accountData}
-        posts={accountData.posts}
+        posts={accountData.posts.reverse()}
         showFollow={false}
         followUser={followUser}
         likePost={likePost}

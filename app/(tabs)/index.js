@@ -19,6 +19,8 @@ export default function Home() {
     return acc;
   }, []);
 
+  posts.reverse();
+
   return (
     <View>
       <HomeFeed
