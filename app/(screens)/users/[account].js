@@ -1,21 +1,34 @@
-import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
-import React, { useState } from "react";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  Pressable,
+} from "react-native";
+import React, { useContext, useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import HomeFeed from "../../components/homeFeed";
+import Markdown from "react-native-markdown-display";
+import { AccountContext } from "../../_layout";
 
 export default function Account() {
   const data = useLocalSearchParams();
-  { account, userData, allAccountData, followUser }
+  const { accountData, allAccountData, followUser, likePost } =
+    useContext(AccountContext);
 
   const account = data.account;
-  const userData = JSON.parse(data.userData);
-  const allAccountData = JSON.parse(data.allAccountData);
-  const followUser = data.followUser;
-  const setAccountData = data.setAccountData;
-  
+
   const [visitedAccountData, setVisitedAccountData] = useState(
     allAccountData.find((data) => data.username === account) || {}
   );
+
+  useEffect(() => {
+    const newData = allAccountData.find((data) => data.username === account);
+    if (newData && newData !== visitedAccountData) {
+      setVisitedAccountData(newData);
+    }
+  }, [account, allAccountData]);
 
   return (
     <View style={styles.accountContainer}>
@@ -27,34 +40,49 @@ export default function Account() {
           />
         </View>
         <View style={styles.leftData}>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoCount}>
-              {visitedAccountData.postsCount}
-            </Text>
-            <Text style={styles.infoTitle}>posts</Text>
+          <View style={styles.counts}>
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoCount}>
+                {visitedAccountData.postsCount}
+              </Text>
+              <Text style={styles.infoTitle}>posts</Text>
+            </View>
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoCount}>
+                {visitedAccountData.followerCount}
+              </Text>
+              <Text style={styles.infoTitle}>followers</Text>
+            </View>
+            <View style={styles.infoContainer}>
+              <Text style={styles.infoCount}>
+                {visitedAccountData.followingCount}
+              </Text>
+              <Text style={styles.infoTitle}>following</Text>
+            </View>
           </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoCount}>
-              {visitedAccountData.followerCount}
-            </Text>
-            <Text style={styles.infoTitle}>followers</Text>
-          </View>
-          <View style={styles.infoContainer}>
-            <Text style={styles.infoCount}>
-              {visitedAccountData.followingCount}
-            </Text>
-            <Text style={styles.infoTitle}>following</Text>
+          <View style={styles.followBtnContainer}>
+            <Pressable
+              style={styles.followBtn}
+              onPress={() => followUser(visitedAccountData.username)}
+            >
+              <Text>
+                {accountData.following.includes(account)
+                  ? "Unfollow"
+                  : "Follow"}
+              </Text>
+            </Pressable>
           </View>
         </View>
       </View>
       <View style={styles.bio}>
-        <Text>{visitedAccountData.bio}</Text>
+        <Markdown>{visitedAccountData.bio}</Markdown>
       </View>
       <HomeFeed
-        accountData={userData}
-        setAccountData={setVisitedAccountData}
+        accountData={accountData}
         posts={visitedAccountData.posts}
         showFollow={false}
+        followUser={followUser}
+        likePost={likePost}
       />
     </View>
   );
@@ -87,6 +115,12 @@ const styles = StyleSheet.create({
     borderRadius: 100,
   },
   leftData: {
+    flexDirection: "column",
+    justifyContent: "space-evenly",
+    width: Dimensions.get("window").width - 40 - 100 - 20,
+    paddingBottom: 10,
+  },
+  counts: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -105,6 +139,17 @@ const styles = StyleSheet.create({
   infoTitle: {
     fontSize: 16,
     textAlign: "center",
+  },
+  followBtnContainer: {
+    width: "100%",
+    alignItems: "flex-start",
+  },
+  followBtn: {
+    backgroundColor: "#FFF9D0",
+    paddingHorizontal: 10,
+    paddingVertical: 7,
+    borderRadius: 10,
+    elevation: 5,
   },
   bio: {
     marginTop: 10,
