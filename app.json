@@ -3,7 +3,7 @@
     "name": "pal-hive",
     "slug": "pal-hive",
     "scheme": "pal-hive",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "orientation": "portrait",
     "description": "Easily track daily expenses in multiple languages and currencies.",
     "icon": "./assets/images/icon.png",
