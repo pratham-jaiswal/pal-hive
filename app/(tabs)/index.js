@@ -8,8 +8,10 @@ export default function Home() {
     useContext(AccountContext);
 
   const posts = allAccountData.reduce((acc, user) => {
-    if (user.username !== accountData.username) {
-      // && accountData.following.includes(user.username) // for following
+    if (
+      user.username !== accountData.username &&
+      accountData.following.includes(user.username)
+    ) {
       const userPosts = user.posts.map((post) => ({
         ...post,
         pfpUri: user.pfpUri,
