@@ -6,7 +6,6 @@ Pal Hive is a social media platform designed to foster connections and community
 
 - Chat UI
 - Search UI
-- Notification UI
 - Settings UI
 - Create New Post UI
 - Connect Database
