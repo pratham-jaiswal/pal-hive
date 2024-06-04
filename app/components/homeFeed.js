@@ -5,15 +5,7 @@ import { Ionicons } from "@expo/vector-icons";
 import Markdown from "react-native-markdown-display";
 import { useEffect, useState } from "react";
 
-function Post({
-  item,
-  accountData,
-  followUser,
-  setAccountData,
-  showFollow,
-  allAccountData,
-  likePost,
-}) {
+function Post({ item, accountData, followUser, showFollow, likePost }) {
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
@@ -38,10 +30,6 @@ function Post({
               pathname: "/(screens)/users/[account]",
               params: {
                 account: item.username,
-                userData: JSON.stringify(accountData),
-                followUser: followUser,
-                setAccountData: setAccountData,
-                allAccountData: JSON.stringify(allAccountData),
               },
             })
           }
@@ -64,7 +52,7 @@ function Post({
             >
               <Text>
                 {accountData.following.includes(item.username)
-                  ? "Following"
+                  ? "Unfollow"
                   : "Follow"}
               </Text>
             </Pressable>
@@ -97,79 +85,12 @@ function Post({
 }
 
 export default function HomeFeed({
-  allAccountData,
-  setAllAccountData,
   accountData,
-  setAccountData,
   posts,
   showFollow,
+  followUser,
+  likePost,
 }) {
-
-  function followUser(account) {
-    setAccountData((prevData) => {
-      const isFollowing = prevData.following.includes(account);
-      const updatedFollowing = isFollowing
-        ? prevData.following.filter((user) => user !== account)
-        : [...prevData.following, account];
-
-      return {
-        ...prevData,
-        following: updatedFollowing,
-        followingCount: isFollowing
-          ? prevData.followingCount - 1
-          : prevData.followingCount + 1,
-      };
-    });
-
-    setAllAccountData((prevData) =>
-      prevData.map((user) => {
-        if (user.username === account) {
-          const isFollowedBy = user.followers.includes(accountData.username);
-          const updatedFollowers = isFollowedBy
-            ? user.followers.filter(
-                (follower) => follower !== accountData.username
-              )
-            : [...user.followers, accountData.username];
-
-          return {
-            ...user,
-            followers: updatedFollowers,
-            followerCount: isFollowedBy
-              ? user.followerCount - 1
-              : user.followerCount + 1,
-          };
-        }
-        return user;
-      })
-    );
-  }
-
-  function likePost(postId) {
-    setAllAccountData((prevData) =>
-      prevData.map((user) => {
-        const updatedPosts = user.posts.map((post) => {
-          if (post.id === postId) {
-            const isLiked = post.likedBy.includes(accountData.username);
-            return {
-              ...post,
-              likedBy: isLiked
-                ? post.likedBy.filter(
-                    (username) => username !== accountData.username
-                  )
-                : [...post.likedBy, accountData.username],
-              likeCount: isLiked ? post.likeCount - 1 : post.likeCount + 1,
-            };
-          }
-          return post;
-        });
-        return {
-          ...user,
-          posts: updatedPosts,
-        };
-      })
-    );
-  }
-
   return (
     <View style={styles.container}>
       <FlashList
@@ -179,11 +100,9 @@ export default function HomeFeed({
             <Post
               item={item}
               accountData={accountData}
-              setAccountData={setAccountData}
               followUser={followUser}
-              likePost={likePost}
               showFollow={showFollow}
-              allAccountData={allAccountData}
+              likePost={likePost}
             />
           );
         }}
@@ -281,6 +200,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   footer: {
-    height: 75,
+    height: 100,
   },
 });
