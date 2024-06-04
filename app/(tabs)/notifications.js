@@ -1,8 +1,7 @@
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { AccountContext } from "../_layout";
 import { useContext, useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
-import { router } from "expo-router";
 
 export default function Notifications() {
   const { accountData } =
@@ -33,14 +32,14 @@ export default function Notifications() {
         data={likes}
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.notificationContainer} activeOpacity={0.5} onPress={() => router.push("/account#1")}>
+          <View style={styles.notificationContainer}>
             <Text style={styles.notification}>
               <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
                 @{item.username}
               </Text>{" "}
               liked your post "{item.postTitle}"
             </Text>
-          </TouchableOpacity>
+          </View>
         )}
         estimatedItemSize={200}
       />
