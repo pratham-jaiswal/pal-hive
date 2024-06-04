@@ -75,9 +75,12 @@ function Post({ item, accountData, followUser, showFollow, likePost }) {
         <Markdown>{item.postText}</Markdown>
       </View>
       <View style={styles.actionsContainer}>
-        <Pressable onPress={handleLikePress}>
-          <Ionicons name={likeIcon} size={22} color={likeColor} />
-        </Pressable>
+        <View style={styles.action}>
+          <Pressable onPress={handleLikePress}>
+            <Ionicons name={likeIcon} size={22} color={likeColor} />
+          </Pressable>
+          <Text style={styles.actionCount}>{item.likeCount}</Text>
+        </View>
         <Ionicons name="paper-plane-outline" size={22} color="black" />
       </View>
     </View>
@@ -198,6 +201,15 @@ const styles = StyleSheet.create({
     width: "100%",
     paddingVertical: 10,
     paddingHorizontal: 12,
+  },
+  action: {
+    flexDirection: "row",
+    verticalAlign: "center",
+    gap: 3,
+  },
+  actionCount: {
+    fontSize: 15,
+    alignSelf: "center",
   },
   footer: {
     height: 100,
