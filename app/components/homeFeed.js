@@ -95,10 +95,16 @@ export default function HomeFeed({
   likePost,
   footerMarginBottom,
 }) {
+  const [reversedPosts, setReversedPosts] = useState([]);
+
+  useEffect(() => {
+    setReversedPosts(posts.reverse());
+  }, []);
+
   return (
     <View style={styles.container}>
       <FlashList
-        data={posts}
+        data={reversedPosts}
         renderItem={({ item }) => {
           return (
             <Post

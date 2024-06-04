@@ -45,7 +45,7 @@ export default function Profile() {
       </View>
       <HomeFeed
         accountData={accountData}
-        posts={accountData.posts.reverse()}
+        posts={accountData.posts}
         showFollow={false}
         followUser={followUser}
         likePost={likePost}

@@ -42,9 +42,7 @@ export default function Search() {
     }
     return acc;
   }, []);
-
-  posts.reverse();
-
+  
   return (
     <View style={styles.container}>
       <TextInput

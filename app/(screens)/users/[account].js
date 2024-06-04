@@ -77,7 +77,7 @@ export default function Account() {
       </View>
       <HomeFeed
         accountData={accountData}
-        posts={visitedAccountData.posts.reverse()}
+        posts={visitedAccountData.posts}
         showFollow={false}
         followUser={followUser}
         likePost={likePost}
