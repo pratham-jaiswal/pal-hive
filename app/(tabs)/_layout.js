@@ -2,8 +2,20 @@ import { Tabs, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
+import { useContext, useEffect, useState } from "react";
+import { AccountContext } from "../_layout";
 
 export default function TabLayout() {
+  const { accountData } = useContext(AccountContext);
+
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    setTimeout(() => {
+      setUsername(accountData.username);
+    }, 1000);
+  }, [accountData]);
+
   return (
     <Tabs
       screenOptions={{
@@ -30,11 +42,10 @@ export default function TabLayout() {
           headerTitle: "Pal Hive",
           headerStyle: { backgroundColor: "#5AB2FF" },
           headerTitleStyle: {
-            fontStyle: "italic",
             fontFamily: "monospace",
             color: "#FFF9D0",
             marginLeft: 5,
-          },          
+          },
           headerShown: true,
           headerShadowVisible: false,
           tabBarIcon: (data) => (
@@ -82,7 +93,6 @@ export default function TabLayout() {
           headerTitle: "Explore",
           headerStyle: { backgroundColor: "#5AB2FF" },
           headerTitleStyle: {
-            fontStyle: "italic",
             fontFamily: "monospace",
             color: "#FFF9D0",
             marginLeft: 5,
@@ -113,7 +123,6 @@ export default function TabLayout() {
           headerTitle: "Notifications",
           headerStyle: { backgroundColor: "#5AB2FF" },
           headerTitleStyle: {
-            fontStyle: "italic",
             fontFamily: "monospace",
             color: "#FFF9D0",
             marginLeft: 5,
@@ -142,10 +151,9 @@ export default function TabLayout() {
       <Tabs.Screen
         name="account"
         options={{
-          headerTitle: "user101",
+          headerTitle: username,
           headerStyle: { backgroundColor: "#5AB2FF" },
           headerTitleStyle: {
-            fontStyle: "italic",
             fontFamily: "monospace",
             color: "#FFF9D0",
             marginLeft: 5,
