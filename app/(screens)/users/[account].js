@@ -13,11 +13,9 @@ import Markdown from "react-native-markdown-display";
 import { AccountContext } from "../../_layout";
 
 export default function Account() {
-  const data = useLocalSearchParams();
+  const { account } = useLocalSearchParams();
   const { accountData, allAccountData, followUser, likePost } =
     useContext(AccountContext);
-
-  const account = data.account;
 
   const [visitedAccountData, setVisitedAccountData] = useState(
     allAccountData.find((data) => data.username === account) || {}
