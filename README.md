@@ -4,11 +4,9 @@ Pal Hive is a social media platform designed to foster connections and community
 
 ## To Do
 
-- Add follow button in account page
 - Chat UI
 - Search UI
 - Notification UI
-- Own Account UI
 - Settings UI
 - Create New Post UI
 - Connect Database
