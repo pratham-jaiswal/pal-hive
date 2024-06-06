@@ -62,7 +62,7 @@ export default function Register() {
     } else {
       setValidity({ ...validity, username: true });
     }
-    setUsername(text.toLowerCase());
+    setUsername(text.toLowerCase().replace(/\s+/g, ''));
   };
 
   const handleEmail = (text) => {
@@ -72,7 +72,7 @@ export default function Register() {
     } else {
       setValidity({ ...validity, email: true });
     }
-    setEmail(text.toLowerCase());
+    setEmail(text.toLowerCase().replace(/\s+/g, ''));
   };
 
   const handlePassword = (text) => {
@@ -83,7 +83,7 @@ export default function Register() {
     } else {
       setValidity({ ...validity, password: true });
     }
-    setPassword(text);
+    setPassword(text.replace(/\s+/g, ''));
   };
 
   return (

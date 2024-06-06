@@ -43,7 +43,7 @@ export default function Login() {
     } else {
       setValidity({ ...validity, password: true });
     }
-    setPassword(text);
+    setPassword(text.replace(/\s+/g, ''));
   };
 
   const handleEmail = (text) => {
@@ -53,7 +53,7 @@ export default function Login() {
     } else {
       setValidity({ ...validity, email: true });
     }
-    setEmail(text.toLowerCase());
+    setEmail(text.toLowerCase().replace(/\s+/g, ''));
   };
 
   return (
