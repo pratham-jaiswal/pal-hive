@@ -1,12 +1,17 @@
-import { Tabs, router } from "expo-router";
+import { Redirect, Tabs, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { AccountContext } from "../_layout";
-import { View } from "react-native-web";
 
 export default function TabLayout() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  if (!isAuthenticated) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
   const { accountData } = useContext(AccountContext);
 
   const [username, setUsername] = useState("");
@@ -134,12 +139,15 @@ export default function TabLayout() {
               name="add-circle-outline"
               size={30}
               color={data.color}
-              style={[styles.tabIcon ,{
-                backgroundColor: data.focused
-                  ? "rgba(255, 249, 208, 0.8)"
-                  : "transparent",
-                opacity: data.focused ? 1 : 0.9,
-              }]}
+              style={[
+                styles.tabIcon,
+                {
+                  backgroundColor: data.focused
+                    ? "rgba(255, 249, 208, 0.8)"
+                    : "transparent",
+                  opacity: data.focused ? 1 : 0.9,
+                },
+              ]}
             />
           ),
           headerShown: true,
