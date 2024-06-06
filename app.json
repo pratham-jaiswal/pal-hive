@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "pal-hive",
+    "name": "Pal Hive",
     "slug": "pal-hive",
     "scheme": "pal-hive",
     "version": "0.1.0",
@@ -17,15 +17,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true,
-      "bundleIdentifier": "com.maxxdevs.pal-hive"
+      "supportsTablet": true
     },
     "android": {
+      "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "bundleIdentifier": "com.maxxdevs.pal-hive"
+      "package": "com.maxxdevs.palhive"
     },
     "web": {
       "bundler": "metro",
@@ -38,6 +38,14 @@
     "experiments": {
       "typedRoutes": true
     },
-    "owner": "pratham-jaiswal"
+    "owner": "pratham-jaiswal",
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "90d08e8b-8a56-4f8f-9cdb-f7a749a3df73"
+      }
+    }
   }
 }
