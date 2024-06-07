@@ -187,7 +187,7 @@ const RootLayout = () => {
     },
     {
       bio: "Hi, I'm Pratham!",
-      email: "prthm5@gmail.com",
+      email: "prthm13@gmail.com",
       followerCount: 0,
       followers: [],
       following: [],
