@@ -21,7 +21,7 @@ export default function TabLayout() {
       }
       setLoading(false);
     }
-  }, [user, allAccountData]);
+  }, []);
 
   const [username, setUsername] = useState("");
 
