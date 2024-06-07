@@ -176,7 +176,7 @@ function CreatePost() {
         </TouchableOpacity>
       </View>
       <Modal
-        animationType="slide"
+        animationType="none"
         transparent={true}
         visible={modal.show}
         onRequestClose={() => {
@@ -188,6 +188,7 @@ function CreatePost() {
       >
         <View
           style={{
+            backgroundColor: "#00000080",
             flex: 1,
             justifyContent: "center",
             alignItems: "center",
@@ -196,13 +197,13 @@ function CreatePost() {
           <View
             style={{
               backgroundColor: "#fff9d0e6",
-              width: "50%",
+              width: "60%",
               borderRadius: 12,
               paddingVertical: 20,
-              paddingHorizontal: 20,
+              paddingHorizontal: 15,
               justifyContent: "space-between",
-              gap: 20,
-              alignItems: "flex-end",
+              gap: 30,
+              alignItems: "center",
             }}
           >
             <Text style={{ textAlign: "center" }}>
@@ -210,11 +211,11 @@ function CreatePost() {
             </Text>
             <TouchableOpacity
               style={{
-                backgroundColor: "#A0DEFF",
-                width: "30%",
+                backgroundColor: "#5AB2FF",
                 borderRadius: 12,
                 paddingVertical: 7,
-                paddingHorizontal: 5,
+                paddingHorizontal: 10,
+                alignSelf: "flex-end",
               }}
               activeOpacity={0.5}
               onPress={() =>
@@ -224,7 +225,7 @@ function CreatePost() {
                 })
               }
             >
-              <Text style={{ textAlign: "center" }}>Ok</Text>
+              <Text style={{ textAlign: "center", color: "#FFF9D0" }}>Ok</Text>
             </TouchableOpacity>
           </View>
         </View>
