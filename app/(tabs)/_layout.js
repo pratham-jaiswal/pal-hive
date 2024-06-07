@@ -9,7 +9,7 @@ import { useAuth0 } from "react-native-auth0";
 export default function TabLayout() {
   const { accountData, setAccountData, allAccountData } =
     useContext(AccountContext);
-  const { hasValidCredentials, clearSession, clearCredentials, isLoading, user } = useAuth0();
+  const { hasValidCredentials, clearSession, isLoading, user } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
@@ -58,7 +58,6 @@ export default function TabLayout() {
     try {
       setLogoutModalVisible(false);
       await clearSession();
-      await clearCredentials();
       setAccountData({});
       router.replace({ pathname: "/(auth)/login" });
     } catch (e) {
