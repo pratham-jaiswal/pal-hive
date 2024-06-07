@@ -1,5 +1,5 @@
-import { useFocusEffect } from "expo-router";
-import { useCallback, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useContext, useState } from "react";
 import {
   View,
   Image,
@@ -9,19 +9,20 @@ import {
   ActivityIndicator,
   TouchableOpacity,
 } from "react-native";
+import { useAuth0 } from "react-native-auth0";
 import { Dropdown } from "react-native-element-dropdown";
+import { AccountContext } from "../_layout";
 
-export default function Register() {
+export default function AccountSetup() {
+  const { setAccountData, allAccountData, setAllAccountData } =
+    useContext(AccountContext);
+
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [pfpSet, setPfpSet] = useState();
+  const [pfpSet, setPfpSet] = useState(1);
   const [loading, setLoading] = useState(true);
-  const [validity, setValidity] = useState({
-    username: true,
-    email: true,
-    password: true,
-  });
+  const [validity, setValidity] = useState({ length: true, unique: true });
+
+  const { user } = useAuth0();
 
   const pfpSetList = [
     { label: "Robo", value: 1 },
@@ -35,15 +36,9 @@ export default function Register() {
     useCallback(() => {
       return () => {
         setUsername("");
-        setEmail("");
-        setPassword("");
-        setPfpSet();
+        setPfpSet(1);
         setLoading(true);
-        setValidity({
-          username: true,
-          email: true,
-          password: true,
-        });
+        setValidity({ length: true, unique: true });
       };
     }, [])
   );
@@ -57,33 +52,34 @@ export default function Register() {
   };
 
   const handleUsername = (text) => {
-    if (text.length < 3) {
-      setValidity({ ...validity, username: false });
-    } else {
-      setValidity({ ...validity, username: true });
-    }
-    setUsername(text.toLowerCase().replace(/\s+/g, ''));
+    const formattedText = text.toLowerCase().replace(/\s+/g, "");
+    const isLengthValid = formattedText.length >= 3;
+    const isUnique = !allAccountData.some(
+      (account) => account.username === formattedText
+    );
+
+    setValidity({ length: isLengthValid, unique: isUnique });
+    setUsername(formattedText);
   };
 
-  const handleEmail = (text) => {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(text)) {
-      setValidity({ ...validity, email: false });
-    } else {
-      setValidity({ ...validity, email: true });
-    }
-    setEmail(text.toLowerCase().replace(/\s+/g, ''));
-  };
+  const createAccount = async () => {
+    const userAccountDataccountData = {
+      username: username,
+      email: user.email,
+      pfpUri: `https://robohash.org/${username}?set=set${pfpSet}`,
+      bio: "Hi, I'm Pratham!",
+      followers: [],
+      followerCount: 0,
+      following: [],
+      followingCount: 0,
+      posts: [],
+      postsCount: 0,
+    };
 
-  const handlePassword = (text) => {
-    const passwordRegex =
-      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(text)) {
-      setValidity({ ...validity, password: false });
-    } else {
-      setValidity({ ...validity, password: true });
-    }
-    setPassword(text.replace(/\s+/g, ''));
+    setAccountData(userAccountDataccountData);
+    setAllAccountData([...allAccountData, userAccountDataccountData]);
+
+    router.replace({ pathname: "/(tabs)" });
   };
 
   return (
@@ -119,36 +115,13 @@ export default function Register() {
             value={username}
             onChangeText={handleUsername}
           />
-          {!validity.username && (
+          {!validity.length ? (
             <Text style={styles.errorText}>
               Username must be at least 3 characters long
             </Text>
-          )}
-          <TextInput
-            inputMode="email"
-            style={styles.textInput}
-            placeholder="email"
-            value={email}
-            onChangeText={handleEmail}
-          />
-          {!validity.email && (
+          ) : !validity.unique && (
             <Text style={styles.errorText}>
-              Please enter a valid email address
-            </Text>
-          )}
-          <TextInput
-            inputMode="text"
-            secureTextEntry={true}
-            style={styles.textInput}
-            placeholder="password"
-            value={password}
-            onChangeText={handlePassword}
-          />
-          {!validity.password && (
-            <Text style={styles.errorText}>
-              Password must be at least 8 characters long, contain one uppercase
-              letter, one lowercase letter, one number, and one special
-              character
+              Username is already taken
             </Text>
           )}
           <View style={styles.rowContainer}>
@@ -185,14 +158,8 @@ export default function Register() {
             <TouchableOpacity
               style={styles.btn}
               activeOpacity={0.5}
-              disabled={
-                !validity.username ||
-                !validity.email ||
-                !validity.password ||
-                !username ||
-                !email ||
-                !password
-              }
+              onPress={createAccount}
+              disabled={!validity.length || !validity.unique || !username || loading}
             >
               <Text style={styles.btnText}>Register</Text>
             </TouchableOpacity>

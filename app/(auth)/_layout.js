@@ -1,42 +1,14 @@
-import { Tabs } from "expo-router";
+import { Stack } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { AccountContext } from "../_layout";
 
 export default function TabLayout() {
-  const { accountData } = useContext(AccountContext);
-
   return (
-    <Tabs
-      screenOptions={{
-        tabBarActiveTintColor: "#5AB2FF",
-        tabBarInactiveTintColor: "#FFF9D0",
-        tabBarActiveBackgroundColor: "#FFF9D0",
-        tabBarIconStyle: { display: "none" },
-        tabBarStyle: {
-          height: 60,
-          position: "absolute",
-          backgroundColor: "#A0DEFF",
-        },
-        tabBarLabelStyle: {
-          position: "absolute",
-          top: 0,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          textAlignVertical: "center",
-          fontSize: 16,
-        },
-        headerTitle: "Pal Hive",
-        headerShadowVisible: false,
-      }}
-      sceneContainerStyle={{
-        backgroundColor: "#5AB2FF",
-      }}
-    >
-      <Tabs.Screen
+    <Stack>
+      <Stack.Screen
         name="login"
         options={{
-          tabBarLabel: "Login",
+          headerTitle: "Pal Hive",
           headerStyle: { backgroundColor: "#5AB2FF" },
           headerTitleStyle: {
             fontFamily: "monospace",
@@ -44,12 +16,13 @@ export default function TabLayout() {
             marginLeft: 5,
           },
           headerShadowVisible: false,
+          contentStyle: { backgroundColor: "#5AB2FF" },
         }}
       />
-      <Tabs.Screen
-        name="register"
+      <Stack.Screen
+        name="accountSetUp"
         options={{
-          tabBarLabel: "Register",
+          headerTitle: "Account Setup",
           headerStyle: { backgroundColor: "#5AB2FF" },
           headerTitleStyle: {
             fontFamily: "monospace",
@@ -57,8 +30,9 @@ export default function TabLayout() {
             marginLeft: 5,
           },
           headerShadowVisible: false,
+          contentStyle: { backgroundColor: "#5AB2FF" },
         }}
       />
-    </Tabs>
+    </Stack>
   );
 }
