@@ -9,12 +9,19 @@ import { useAuth0 } from "react-native-auth0";
 export default function TabLayout() {
   const { accountData, setAccountData, allAccountData } =
     useContext(AccountContext);
-  const { user, clearSession } = useAuth0();
+  const { hasValidCredentials, clearSession, isLoading, user } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
 
   useEffect(() => {
-    if (user) {
+    const isLoggedIn = async () => {
+      const check = await hasValidCredentials();
+      return check;
+    }
+
+    const loggedIn = isLoggedIn();
+
+    if (user && !isLoading && loggedIn) {
       const userAccountData = allAccountData.find(
         (account) => account.email === user.email
       );
@@ -23,7 +30,7 @@ export default function TabLayout() {
       }
       setLoading(false);
     }
-  }, []);
+  }, [isLoading]);
 
   const [username, setUsername] = useState("");
 
@@ -35,11 +42,11 @@ export default function TabLayout() {
     }
   }, [accountData]);
 
-  if (!user) {
+  if (!user && !isLoading) {
     return <Redirect href="/(auth)/login" />;
   }
 
-  if (loading) {
+  if (loading || isLoading) {
     return null;
   }
 
@@ -53,7 +60,7 @@ export default function TabLayout() {
       await clearSession();
       router.replace({ pathname: "/(auth)/login" });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
