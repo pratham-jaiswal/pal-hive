@@ -6,8 +6,6 @@ export default function TabLayout() {
   return (
     <Stack
       screenOptions={{
-        tabBarActiveTintColor: "blue",
-        tabBarShowLabel: false,
         headerTintColor: "#FFF9D0",
         headerLeft: () => (
           <TouchableOpacity
