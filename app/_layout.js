@@ -1,6 +1,8 @@
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { createContext, useEffect, useState } from "react";
+import config from "../auth0-configuration";
+import { Auth0Provider, useAuth0 } from 'react-native-auth0';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -24,6 +26,7 @@ const RootLayout = () => {
   const [allAccountData, setAllAccountData] = useState([
     {
       username: "pratham",
+      email: "prthm0@gmail.com",
       pfpUri: `https://robohash.org/pratham?set=set3`,
       bio: "Hi, I'm Pratham!",
       followers: ["pratham2", "pratham3"],
@@ -52,6 +55,7 @@ const RootLayout = () => {
     },
     {
       username: "pratham1",
+      email: "prthm1@gmail.com",
       pfpUri: `https://robohash.org/pratham1?set=set3`,
       bio: "Hi, I'm Pratham!",
       followers: ["pratham"],
@@ -96,6 +100,7 @@ const RootLayout = () => {
     },
     {
       username: "pratham2",
+      email: "prthm2@gmail.com",
       pfpUri: `https://robohash.org/pratham2?set=set3`,
       bio: "Hi, I'm Pratham!",
       followers: ["pratham", "pratham1", "pratham3"],
@@ -124,6 +129,7 @@ const RootLayout = () => {
     },
     {
       username: "pratham3",
+      email: "prthm3@gmail.com",
       pfpUri: `https://robohash.org/pratham3?set=set3`,
       bio: "Hi, I'm Pratham!",
       followers: ["pratham", "pratham2", "pratham4"],
@@ -152,6 +158,7 @@ const RootLayout = () => {
     },
     {
       username: "pratham4",
+      email: "prthm4@gmail.com",
       pfpUri: `https://robohash.org/pratham4?set=set3`,
       bio: "Hi, I'm Pratham!",
       followers: ["pratham", "pratham2", "pratham3"],
@@ -180,36 +187,7 @@ const RootLayout = () => {
     },
   ]);
 
-  const [accountData, setAccountData] = useState({
-    username: "pratham",
-    pfpUri: `https://robohash.org/pratham?set=set3`,
-    bio: "Hi, I'm Pratham!",
-    followers: ["pratham2", "pratham3"],
-    followerCount: 2,
-    following: ["pratham1", "pratham2", "pratham4"],
-    followingCount: 3,
-    posts: [
-      {
-        id: 1,
-        title: "Post 1",
-        postText: `# Lorem ipsum dolor\n## a\nsit\n amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.`,
-        username: "pratham",
-        pfpUri: `https://robohash.org/pratham?set=set3`,
-        likedBy: ["pratham2", "pratham3"],
-        likeCount: 2,
-      },
-      {
-        id: 2,
-        title: "Post 2",
-        postText: `# Lorem ipsum dolor\n## a\nsit\n amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet, adipiscing nec, ultricies sed, dolor.`,
-        username: "pratham",
-        pfpUri: `https://robohash.org/pratham?set=set3`,
-        likedBy: ["pratham1", "pratham3"],
-        likeCount: 2,
-      },
-    ],
-    postsCount: 2,
-  });
+  const [accountData, setAccountData] = useState();
 
   function followUser(account) {
     setAccountData((prevData) => {
@@ -277,42 +255,44 @@ const RootLayout = () => {
   }
 
   return (
-    <AccountContext.Provider
-      value={{
-        accountData,
-        setAccountData,
-        allAccountData,
-        setAllAccountData,
-        followUser,
-        likePost,
-      }}
-    >
-      <Stack
-        screenOptions={{
-          statusBarTranslucent: true,
-          statusBarStyle: "light",
+    <Auth0Provider domain={config.domain} clientId={config.clientId}>
+      <AccountContext.Provider
+        value={{
+          accountData,
+          setAccountData,
+          allAccountData,
+          setAllAccountData,
+          followUser,
+          likePost,
         }}
       >
-        <Stack.Screen
-          name="(tabs)"
-          options={{
-            headerShown: false,
+        <Stack
+          screenOptions={{
+            statusBarTranslucent: true,
+            statusBarStyle: "light",
           }}
-        />
-        <Stack.Screen
-          name="(screens)"
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Stack.Screen
-          name="(auth)"
-          options={{
-            headerShown: false,
-          }}
-        />
-      </Stack>
-    </AccountContext.Provider>
+        >
+          <Stack.Screen
+            name="(tabs)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(screens)"
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="(auth)"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack>
+      </AccountContext.Provider>
+    </Auth0Provider>
   );
 };
 

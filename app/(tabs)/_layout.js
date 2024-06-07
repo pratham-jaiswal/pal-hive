@@ -4,23 +4,46 @@ import { TouchableOpacity } from "react-native";
 import { StyleSheet } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { AccountContext } from "../_layout";
+import { useAuth0 } from "react-native-auth0";
 
 export default function TabLayout() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { accountData, setAccountData, allAccountData } = useContext(AccountContext);
+  const { user } = useAuth0();
+  const [loading, setLoading] = useState(true);
 
-  if (!isAuthenticated) {
-    return <Redirect href="/(auth)/login" />;
-  }
-
-  const { accountData } = useContext(AccountContext);
+  useEffect(() => {
+    if (user) {
+      const userAccountData = allAccountData.find(
+        (account) => account.email === user.email
+      );
+      if (userAccountData) {
+        setAccountData(userAccountData);
+      }
+      setLoading(false);
+    }
+  }, [user, allAccountData]);
 
   const [username, setUsername] = useState("");
 
   useEffect(() => {
-    setTimeout(() => {
-      setUsername(accountData.username);
-    }, 1000);
+    if (accountData) {
+      setTimeout(() => {
+        setUsername(accountData.username);
+      }, 1000);
+    }
   }, [accountData]);
+
+  if (!user) {
+    return <Redirect href="/(auth)/login" />;
+  }
+
+  if (loading) {
+    return null;
+  }
+
+  if (!accountData) {
+    return <Redirect href="/(auth)/accountSetUp" />;
+  }
 
   return (
     <Tabs
