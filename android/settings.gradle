@@ -1,4 +1,4 @@
-rootProject.name = 'pal-hive'
+rootProject.name = 'Pal Hive'
 
 dependencyResolutionManagement {
   versionCatalogs {

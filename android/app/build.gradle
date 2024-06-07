@@ -85,6 +85,9 @@ android {
 
     namespace 'com.maxxdevs.palhive'
     defaultConfig {
+// @generated begin react-native-auth0-manifest-placeholder - expo prebuild (DO NOT MODIFY) sync-abe64ff3f4ee9edf67d5cac1f4f5154888b1807a
+manifestPlaceholders = [auth0Domain: "prathamj-dev.jp.auth0.com", auth0Scheme: "com.maxxdevs.palhive.auth0"]
+// @generated end react-native-auth0-manifest-placeholder
         applicationId 'com.maxxdevs.palhive'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
