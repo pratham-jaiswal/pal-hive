@@ -72,14 +72,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#5AB2FF",
     borderColor: "#A0DEFF",
     borderWidth: 4,
-    justifyContent: "center",
+    justifyContent: "flex-end",
     alignItems: "center",
     elevation: 3,
+    overflow: "hidden",
   },
   pfpImage: {
     width: "90%",
     aspectRatio: 1,
-    borderRadius: 100,
   },
   leftData: {
     flexDirection: "column",

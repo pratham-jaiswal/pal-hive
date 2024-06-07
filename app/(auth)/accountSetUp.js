@@ -85,14 +85,7 @@ export default function AccountSetup() {
   return (
     <View style={styles.container}>
       <View style={styles.formContainer}>
-        <View
-          style={[
-            styles.pfpContainer,
-            {
-              alignItems: pfpSet != 3 ? "center" : "flex-end",
-            },
-          ]}
-        >
+        <View style={styles.pfpContainer}>
           {loading && (
             <View style={styles.loadingContainer}>
               <ActivityIndicator size="large" color="#FFF9D0" />
@@ -102,7 +95,7 @@ export default function AccountSetup() {
             source={{
               uri: `https://robohash.org/${username}?set=set${pfpSet}`,
             }}
-            style={[styles.pfpImage, { width: pfpSet != 4 ? "95%" : "80%" }]}
+            style={styles.pfpImage}
             onLoadStart={() => setLoading(true)}
             onLoad={() => setLoading(false)}
           />
@@ -119,10 +112,10 @@ export default function AccountSetup() {
             <Text style={styles.errorText}>
               Username must be at least 3 characters long
             </Text>
-          ) : !validity.unique && (
-            <Text style={styles.errorText}>
-              Username is already taken
-            </Text>
+          ) : (
+            !validity.unique && (
+              <Text style={styles.errorText}>Username is already taken</Text>
+            )
           )}
           <View style={styles.rowContainer}>
             <Text
@@ -159,7 +152,9 @@ export default function AccountSetup() {
               style={styles.btn}
               activeOpacity={0.5}
               onPress={createAccount}
-              disabled={!validity.length || !validity.unique || !username || loading}
+              disabled={
+                !validity.length || !validity.unique || !username || loading
+              }
             >
               <Text style={styles.btnText}>Register</Text>
             </TouchableOpacity>
@@ -191,10 +186,12 @@ const styles = StyleSheet.create({
     borderColor: "#A0DEFF",
     borderWidth: 4,
     justifyContent: "flex-end",
+    alignItems: "center",
     elevation: 7,
     overflow: "hidden",
   },
   pfpImage: {
+    width: "90%",
     aspectRatio: 1,
   },
   loadingContainer: {

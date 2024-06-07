@@ -8,35 +8,39 @@ export default function Home() {
     useContext(AccountContext);
 
   const [posts, setPosts] = useState(
-    allAccountData.reduce((acc, user) => {
-      if (
-        user.username !== accountData.username &&
-        accountData.following.includes(user.username)
-      ) {
-        const userPosts = user.posts.map((post) => ({
-          ...post,
-          pfpUri: user.pfpUri,
-        }));
-        return [...acc, ...userPosts];
-      }
-      return acc;
-    }, [])
+    accountData
+      ? allAccountData.reduce((acc, user) => {
+          if (
+            user.username !== accountData.username &&
+            accountData.following.includes(user.username)
+          ) {
+            const userPosts = user.posts.map((post) => ({
+              ...post,
+              pfpUri: user.pfpUri,
+            }));
+            return [...acc, ...userPosts];
+          }
+          return acc;
+        }, [])
+      : []
   );
 
   useEffect(() => {
-    const updatedPosts = allAccountData.reduce((acc, user) => {
-      if (
-        user.username !== accountData.username &&
-        accountData.following.includes(user.username)
-      ) {
-        const userPosts = user.posts.map((post) => ({
-          ...post,
-          pfpUri: user.pfpUri,
-        }));
-        return [...acc, ...userPosts];
-      }
-      return acc;
-    }, []);
+    const updatedPosts = accountData
+      ? allAccountData.reduce((acc, user) => {
+          if (
+            user.username !== accountData.username &&
+            accountData.following.includes(user.username)
+          ) {
+            const userPosts = user.posts.map((post) => ({
+              ...post,
+              pfpUri: user.pfpUri,
+            }));
+            return [...acc, ...userPosts];
+          }
+          return acc;
+        }, [])
+      : [];
     setPosts(updatedPosts);
   }, [accountData]);
 
