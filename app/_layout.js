@@ -2,7 +2,7 @@ import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { createContext, useEffect, useState } from "react";
 import config from "../auth0-configuration";
-import { Auth0Provider, useAuth0 } from 'react-native-auth0';
+import { Auth0Provider, useAuth0 } from "react-native-auth0";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -14,7 +14,7 @@ const RootLayout = () => {
       try {
         await new Promise((resolve) => setTimeout(resolve, 2000));
       } catch (e) {
-        console.warn(e);
+        console.error(e);
       } finally {
         await SplashScreen.hideAsync();
       }
@@ -184,6 +184,18 @@ const RootLayout = () => {
         },
       ],
       postsCount: 2,
+    },
+    {
+      bio: "Hi, I'm Pratham!",
+      email: "prthm5@gmail.com",
+      followerCount: 0,
+      followers: [],
+      following: [],
+      followingCount: 0,
+      pfpUri: "https://robohash.org/themaxx?set=set4",
+      posts: [],
+      postsCount: 0,
+      username: "themaxx",
     },
   ]);
 
