@@ -99,7 +99,7 @@ export default function HomeFeed({
 
   useEffect(() => {
     setReversedPosts(posts.reverse());
-  }, []);
+  }, [posts]);
 
   return (
     <View style={styles.container}>
