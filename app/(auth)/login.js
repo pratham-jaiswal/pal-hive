@@ -17,7 +17,7 @@ export default function Login() {
       await authorize();
       router.replace({ pathname: "/(tabs)" });
     } catch (e) {
-      console.log(e);
+      console.error(e);
     }
   };
 
