@@ -16,6 +16,15 @@ const fetchUserPosts = async (username, setUserPosts) => {
   }
 };
 
+const fetchUserData = async (id) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/users/${id}`);
+    return response.data.username;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export default function Notifications() {
   const { accountData } = useContext(AccountContext);
 
@@ -29,23 +38,29 @@ export default function Notifications() {
   }, [accountData]);
 
   useEffect(() => {
-    tempLikes = [];
-    if (userPosts) {
-      userPosts.forEach((post) => {
-        post.likedBy.forEach((user) => {
-          tempLikes.push({
-            username: user,
-            postId: post.id,
-            postTitle: post.title,
-          });
-        });
-      });
+    const fetchLikesData = async () => {
+      let tempLikes = [];
 
-      tempLikes.reverse();
+      if (userPosts) {
+        for (const post of userPosts) {
+          for (const id of post.likedBy) {
+            const username = await fetchUserData(id);
+            if (username) {
+              tempLikes.push({
+                username,
+                postId: post._id,
+                postTitle: post.title,
+              });
+            }
+          }
+        }
+        tempLikes.reverse();
+        setLikes(tempLikes);
+      }
+    };
 
-      setLikes(tempLikes);
-    }
-  }, [userPosts]);
+    fetchLikesData();
+  }, [userPosts, serverConfig]);
 
   return (
     <View style={styles.container}>
@@ -56,7 +71,7 @@ export default function Notifications() {
           <View style={styles.notificationContainer}>
             <Text style={styles.notification}>
               <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
-                @{item.user.username}
+                @{item.username}
               </Text>{" "}
               liked your post "{item.postTitle}"
             </Text>
