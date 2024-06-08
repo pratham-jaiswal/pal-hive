@@ -4,9 +4,16 @@ Pal Hive is a social media platform designed to foster connections and community
 
 ## To Do
 
-- Chat UI
-- Settings UI
-- Connect Database
+- Chat
+- Settings
+
+## Demo
+![](https://i.imgur.com/C1Ixv6Al.jpg)
+![](https://i.imgur.com/n1Qy4Kjl.jpg)
+![](https://i.imgur.com/hXwp2zll.jpg)
+![](https://i.imgur.com/cgyMTuol.jpg)
+![](https://i.imgur.com/EUTIpmfl.jpg)
+![](https://i.imgur.com/9wfSlLLl.jpg)
 
 ## Built With
 
