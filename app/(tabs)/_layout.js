@@ -5,32 +5,66 @@ import { StyleSheet } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import { AccountContext } from "../_layout";
 import { useAuth0 } from "react-native-auth0";
+import axios from "axios";
+import serverConfig from "../../server_config";
+
+const fetchAllUsers = async (setUsers) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/users`);
+    setUsers(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const checkEmailExists = async (email, setAccountData) => {
+  try {
+    const response = await axios.post(`${serverConfig.api_uri}/check-email`, {
+      email,
+    });
+    setAccountData(response.data.user || {});
+    return response.data.exists;
+  } catch (error) {
+    console.error(error);
+    return false;
+  }
+};
 
 export default function TabLayout() {
-  const { accountData, setAccountData, allAccountData } =
-    useContext(AccountContext);
+  const { accountData, setAccountData } = useContext(AccountContext);
   const { hasValidCredentials, clearSession, isLoading, user } = useAuth0();
   const [loading, setLoading] = useState(true);
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    const isLoggedIn = async () => {
-      const check = await hasValidCredentials();
-      return check;
-    }
+    fetchAllUsers(setUsers);
+  }, []);
 
-    const loggedIn = isLoggedIn();
-
-    if (user && !isLoading && loggedIn) {
-      const userAccountData = allAccountData.find(
-        (account) => account.email === user.email
-      );
-      if (userAccountData) {
-        setAccountData(userAccountData);
+  useEffect(() => {
+    const check = async () => {
+      if (!user) {
+        setAccountData({});
+      } else {
+        if (await checkEmailExists(user.email, setAccountData)) {
+          setLoading(false);
+        } else {
+          router.replace({ pathname: "/(auth)/accountSetUp" });
+        }
       }
-      setLoading(false);
-    }
-  }, [isLoading]);
+    };
+
+    const isLoggedIn = async () => {
+      const loggedIn = await hasValidCredentials();
+      if (loggedIn) {
+        await check();
+      } else {
+        router.replace({ pathname: "/(auth)/login" });
+      }
+    };
+
+    isLoggedIn();
+  }, [isLoading, users, user]);
 
   const [username, setUsername] = useState("");
 
@@ -42,24 +76,16 @@ export default function TabLayout() {
     }
   }, [accountData]);
 
-  if (!user && !isLoading) {
-    return <Redirect href="/(auth)/login" />;
-  }
-
   if (loading || isLoading) {
     return null;
-  }
-
-  if (!accountData) {
-    return <Redirect href="/(auth)/accountSetUp" />;
   }
 
   const LogOut = async () => {
     try {
       setLogoutModalVisible(false);
       await clearSession();
-      setAccountData({});
       router.replace({ pathname: "/(auth)/login" });
+      setAccountData({});
     } catch (e) {
       console.error(e);
     }

@@ -2,46 +2,33 @@ import { View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import HomeFeed from "../components/homeFeed";
 import { AccountContext } from "../_layout";
+import axios from "axios";
+import serverConfig from "../../server_config";
+
+const fetchFollowedUserPosts = async (accountData, setPosts) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/posts`);
+    const allPosts = response.data;
+
+    const followedUserPosts = allPosts.filter((post) =>
+      accountData.following.includes(post.user._id)
+    );
+
+    setPosts(followedUserPosts);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export default function Home() {
-  const { accountData, allAccountData, followUser, likePost } =
-    useContext(AccountContext);
+  const { accountData, followUser, likePost } = useContext(AccountContext);
 
-  const [posts, setPosts] = useState(
-    accountData
-      ? allAccountData.reduce((acc, user) => {
-          if (
-            user.username !== accountData.username &&
-            accountData.following.includes(user.username)
-          ) {
-            const userPosts = user.posts.map((post) => ({
-              ...post,
-              pfpUri: user.pfpUri,
-            }));
-            return [...acc, ...userPosts];
-          }
-          return acc;
-        }, [])
-      : []
-  );
+  const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    const updatedPosts = accountData
-      ? allAccountData.reduce((acc, user) => {
-          if (
-            user.username !== accountData.username &&
-            accountData.following.includes(user.username)
-          ) {
-            const userPosts = user.posts.map((post) => ({
-              ...post,
-              pfpUri: user.pfpUri,
-            }));
-            return [...acc, ...userPosts];
-          }
-          return acc;
-        }, [])
-      : [];
-    setPosts(updatedPosts);
+    if (accountData) {
+      fetchFollowedUserPosts(accountData, setPosts);
+    }
   }, [accountData]);
 
   return (

@@ -10,39 +10,67 @@ import { AccountContext } from "../_layout";
 import { FlashList } from "@shopify/flash-list";
 import { router } from "expo-router";
 import HomeFeed from "../components/homeFeed";
+import axios from "axios";
+import serverConfig from "../../server_config";
+
+const fetchNotFollowedUserPosts = async (accountData, setPosts) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/posts`);
+    const allPosts = response.data;
+
+    const notFollowedUserPosts = allPosts.filter(
+      (post) =>
+        !accountData.following.includes(post.user._id) &&
+        post.user._id !== accountData._id
+    );
+
+    setPosts(notFollowedUserPosts);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const fetchAllUsers = async (setUsers) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/users`);
+    setUsers(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export default function Search() {
-  const { accountData, allAccountData, followUser, likePost } =
-    useContext(AccountContext);
+  const { accountData, followUser, likePost } = useContext(AccountContext);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [posts, setPosts] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    fetchAllUsers(setUsers);
+  }, []);
 
   useEffect(() => {
     if (searchTerm === "") {
       setFilteredData([]);
     } else {
       setFilteredData(
-        allAccountData.filter(
+        users.filter(
           (data) =>
             data.username.toLowerCase().includes(searchTerm.toLowerCase()) &&
             data.username !== accountData.username
         )
       );
     }
-  }, [searchTerm, allAccountData, accountData.username]);
+  }, [searchTerm, users, accountData.username]);
 
-  const posts = allAccountData.reduce((acc, user) => {
-    if (user.username !== accountData.username && !accountData.following.includes(user.username)) {
-      const userPosts = user.posts.map((post) => ({
-        ...post,
-        pfpUri: user.pfpUri,
-      }));
-      return [...acc, ...userPosts];
+  useEffect(() => {
+    if (accountData) {
+      fetchNotFollowedUserPosts(accountData, setPosts);
     }
-    return acc;
-  }, []);
-  
+  }, [accountData]);
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -65,6 +93,7 @@ export default function Search() {
                     pathname: "/(screens)/users/[account]",
                     params: {
                       account: item.username,
+                      id: item._id,
                     },
                   })
                 }
@@ -93,8 +122,6 @@ const styles = StyleSheet.create({
   container: {
     paddingTop: 0,
     height: "100%",
-    // marginHorizontal: 15,
-    // paddingHorizontal: 7,
   },
   searchInput: {
     borderRadius: 12,
@@ -106,7 +133,6 @@ const styles = StyleSheet.create({
   searchList: {
     paddingVertical: 3,
     flex: 1,
-    // backgroundColor: "#5AB",
     marginHorizontal: 20,
   },
   searchItemContainer: {

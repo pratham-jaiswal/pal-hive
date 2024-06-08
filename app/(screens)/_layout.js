@@ -21,11 +21,7 @@ export default function TabLayout() {
               justifyContent: "center",
             }}
           >
-            <Ionicons
-              name="chevron-back"
-              size={24}
-              color="#FFF9D0"
-            />
+            <Ionicons name="chevron-back" size={24} color="#FFF9D0" />
           </TouchableOpacity>
         ),
       }}

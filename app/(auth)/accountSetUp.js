@@ -1,5 +1,5 @@
 import { router, useFocusEffect } from "expo-router";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   View,
   Image,
@@ -12,15 +12,26 @@ import {
 import { useAuth0 } from "react-native-auth0";
 import { Dropdown } from "react-native-element-dropdown";
 import { AccountContext } from "../_layout";
+import axios from "axios";
+import serverConfig from "../../server_config";
+
+const fetchAllUsers = async (setUsers) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/users`);
+    setUsers(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export default function AccountSetup() {
-  const { setAccountData, allAccountData, setAllAccountData } =
-    useContext(AccountContext);
+  const { setAccountData } = useContext(AccountContext);
 
   const [username, setUsername] = useState("");
   const [pfpSet, setPfpSet] = useState(1);
   const [loading, setLoading] = useState(true);
   const [validity, setValidity] = useState({ length: true, unique: true });
+  const [users, setUsers] = useState([]);
 
   const { user } = useAuth0();
 
@@ -32,29 +43,31 @@ export default function AccountSetup() {
     { label: "Human", value: 5 },
   ];
 
+  useEffect(() => {
+    fetchAllUsers(setUsers);
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
       return () => {
         setUsername("");
         setPfpSet(1);
-        setLoading(true);
+        setLoading(false);
         setValidity({ length: true, unique: true });
       };
     }, [])
   );
 
-  const renderItem = (item) => {
-    return (
-      <View style={styles.item}>
-        <Text style={styles.textItem}>{item.label}</Text>
-      </View>
-    );
-  };
+  const renderItem = (item) => (
+    <View style={styles.item}>
+      <Text style={styles.textItem}>{item.label}</Text>
+    </View>
+  );
 
   const handleUsername = (text) => {
     const formattedText = text.toLowerCase().replace(/\s+/g, "");
     const isLengthValid = formattedText.length >= 3;
-    const isUnique = !allAccountData.some(
+    const isUnique = !users.some(
       (account) => account.username === formattedText
     );
 
@@ -63,8 +76,8 @@ export default function AccountSetup() {
   };
 
   const createAccount = async () => {
-    const userAccountDataccountData = {
-      username: username,
+    const userAccountData = {
+      username,
       email: user.email,
       pfpUri: `https://robohash.org/${username}?set=set${pfpSet}`,
       bio: "Hi, I'm Pratham!",
@@ -76,10 +89,14 @@ export default function AccountSetup() {
       postsCount: 0,
     };
 
-    setAccountData(userAccountDataccountData);
-    setAllAccountData([...allAccountData, userAccountDataccountData]);
+    try {
+      await axios.post(`${serverConfig.api_uri}/users`, userAccountData);
 
-    router.replace({ pathname: "/(tabs)" });
+      setAccountData(userAccountData);
+      router.replace({ pathname: "/(tabs)" });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -118,13 +135,7 @@ export default function AccountSetup() {
             )
           )}
           <View style={styles.rowContainer}>
-            <Text
-              style={{
-                fontSize: 16,
-              }}
-            >
-              Profile Pic Type:
-            </Text>
+            <Text style={{ fontSize: 16 }}>Profile Pic Type:</Text>
             <Dropdown
               style={styles.dropdown}
               selectedTextStyle={styles.selectedTextStyle}
@@ -141,9 +152,7 @@ export default function AccountSetup() {
               valueField="value"
               value={pfpSet}
               placeholder="Choose..."
-              onChange={(item) => {
-                setPfpSet(item.value);
-              }}
+              onChange={(item) => setPfpSet(item.value)}
               renderItem={renderItem}
             />
           </View>

@@ -11,10 +11,11 @@ import {
 } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { AccountContext } from "../_layout";
+import axios from "axios";
+import serverConfig from "../../server_config";
 
 function CreatePost() {
-  const { accountData, allAccountData, setAllAccountData, setAccountData } =
-    useContext(AccountContext);
+  const { accountData, setAccountData } = useContext(AccountContext);
 
   const [text, setText] = useState("");
   const [selection, setSelection] = useState({ start: 0, end: 0 });
@@ -52,10 +53,9 @@ function CreatePost() {
     }
   };
 
-  const uploadPost = () => {
+  const uploadPost = async () => {
     try {
       const newPost = {
-        id: Date.now(),
         title: `Post ${accountData.posts.length + 1}`,
         postText: text,
         username: accountData.username,
@@ -63,30 +63,24 @@ function CreatePost() {
         likeCount: 0,
       };
 
-      const updatedAllAccountData = allAccountData.map((account) =>
-        account.username === accountData.username
-          ? {
-              ...account,
-              posts: [...account.posts, newPost],
-              postsCount: account.postsCount + 1,
-            }
-          : account
+      const response = await axios.post(
+        `${serverConfig.api_uri}/posts`,
+        newPost
       );
 
       const updatedAccountData = {
         ...accountData,
-        posts: [...accountData.posts, newPost],
+        posts: [...accountData.posts, response.data],
         postsCount: accountData.postsCount + 1,
       };
 
-      setAllAccountData(updatedAllAccountData);
       setAccountData(updatedAccountData);
-      setText("");
       setModal({
         text: "Your post has been uploaded!",
         show: true,
       });
     } catch (error) {
+      console.error(error);
       setModal({
         text: "An error occurred. Please try again later.",
         show: true,
@@ -218,12 +212,13 @@ function CreatePost() {
                 alignSelf: "flex-end",
               }}
               activeOpacity={0.5}
-              onPress={() =>
+              onPress={() => {
+                setText("");
                 setModal({
                   text: "",
                   show: false,
-                })
-              }
+                });
+              }}
             >
               <Text style={{ textAlign: "center", color: "#FFF9D0" }}>Ok</Text>
             </TouchableOpacity>

@@ -4,20 +4,30 @@ import { router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import Markdown from "react-native-markdown-display";
 import { useEffect, useState } from "react";
+import serverConfig from "../../server_config";
+
+const fetchUserData = async (id) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/users/${id}`);
+    return response.data.pfpUri;
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 function Post({ item, accountData, followUser, showFollow, likePost }) {
   const [liked, setLiked] = useState(false);
 
   useEffect(() => {
-    setLiked(item.likedBy.includes(accountData.username));
-  }, [item, accountData.username]);
+    setLiked(item.likedBy.includes(accountData._id));
+  }, [item, accountData]);
 
   const likeIcon = liked ? "heart" : "heart-outline";
   const likeColor = liked ? "red" : "black";
 
   const handleLikePress = () => {
     setLiked(!liked);
-    likePost(item.id);
+    likePost(item._id);
   };
 
   return (
@@ -29,7 +39,8 @@ function Post({ item, accountData, followUser, showFollow, likePost }) {
             router.push({
               pathname: "/(screens)/users/[account]",
               params: {
-                account: item.username,
+                account: item.user.username,
+                id: item.user._id,
               },
             })
           }
@@ -38,20 +49,20 @@ function Post({ item, accountData, followUser, showFollow, likePost }) {
             <Image
               style={styles.pfpImage}
               alt={item.title}
-              source={{ uri: `https://robohash.org/${item.username}?set=set3` }}
+              source={{ uri: item.user.pfpUri }}
               resizeMode="contain"
             />
           </View>
-          <Text style={styles.username}>@{item.username}</Text>
+          <Text style={styles.username}>@{item.user.username}</Text>
         </Pressable>
         <View style={styles.postTopActions}>
           {showFollow && (
             <Pressable
               style={styles.followBtn}
-              onPress={() => followUser(item.username)}
+              onPress={() => followUser(item.user._id)}
             >
               <Text>
-                {accountData.following.includes(item.username)
+                {accountData.following.includes(item.user._id)
                   ? "Unfollow"
                   : "Follow"}
               </Text>
@@ -117,7 +128,7 @@ export default function HomeFeed({
           );
         }}
         estimatedItemSize={200}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item._id}
         ListFooterComponent={
           <View
             style={{

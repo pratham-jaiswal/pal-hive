@@ -2,29 +2,50 @@ import { View, Text, StyleSheet } from "react-native";
 import { AccountContext } from "../_layout";
 import { useContext, useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
+import axios from "axios";
+import serverConfig from "../../server_config";
+
+const fetchUserPosts = async (username, setUserPosts) => {
+  try {
+    const response = await axios.get(
+      `${serverConfig.api_uri}/users/${username}/posts`
+    );
+    setUserPosts(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export default function Notifications() {
-  const { accountData } =
-    useContext(AccountContext);
+  const { accountData } = useContext(AccountContext);
 
   const [likes, setLikes] = useState([]);
+  const [userPosts, setUserPosts] = useState([]);
+
+  useEffect(() => {
+    if (accountData.username) {
+      fetchUserPosts(accountData.username, setUserPosts);
+    }
+  }, [accountData]);
 
   useEffect(() => {
     tempLikes = [];
-    accountData.posts.forEach((post) => {
-      post.likedBy.forEach((user) => {
-        tempLikes.push({
-          username: user,
-          postId: post.id,
-          postTitle: post.title,
+    if (userPosts) {
+      userPosts.forEach((post) => {
+        post.likedBy.forEach((user) => {
+          tempLikes.push({
+            username: user,
+            postId: post.id,
+            postTitle: post.title,
+          });
         });
       });
-    });
 
-    tempLikes.reverse();
+      tempLikes.reverse();
 
-    setLikes(tempLikes);
-  }, []);
+      setLikes(tempLikes);
+    }
+  }, [userPosts]);
 
   return (
     <View style={styles.container}>
@@ -35,7 +56,7 @@ export default function Notifications() {
           <View style={styles.notificationContainer}>
             <Text style={styles.notification}>
               <Text style={{ fontStyle: "italic", fontWeight: "bold" }}>
-                @{item.username}
+                @{item.user.username}
               </Text>{" "}
               liked your post "{item.postTitle}"
             </Text>

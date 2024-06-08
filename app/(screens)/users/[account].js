@@ -5,37 +5,73 @@ import {
   StyleSheet,
   Dimensions,
   Pressable,
+  ActivityIndicator,
 } from "react-native";
 import React, { useContext, useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
 import HomeFeed from "../../components/homeFeed";
 import Markdown from "react-native-markdown-display";
 import { AccountContext } from "../../_layout";
+import axios from "axios";
+import serverConfig from "../../../server_config";
+
+const fetchUserPosts = async (username, setUserPosts) => {
+  try {
+    const response = await axios.get(
+      `${serverConfig.api_uri}/users/${username}/posts`
+    );
+    setUserPosts(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const fetchUserData = async (id, setVisitedAccountData) => {
+  try {
+    const response = await axios.get(`${serverConfig.api_uri}/users/${id}`);
+    setVisitedAccountData(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export default function Account() {
-  const { account } = useLocalSearchParams();
-  const { accountData, allAccountData, followUser, likePost } =
-    useContext(AccountContext);
+  const { account, id } = useLocalSearchParams();
+  const { accountData, followUser, likePost } = useContext(AccountContext);
 
-  const [visitedAccountData, setVisitedAccountData] = useState(
-    allAccountData.find((data) => data.username === account) || {}
-  );
+  const [visitedAccountData, setVisitedAccountData] = useState({});
+  const [userPosts, setUserPosts] = useState([]);
+  const [followerCount, setFollowerCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
 
   useEffect(() => {
-    const newData = allAccountData.find((data) => data.username === account);
-    if (newData && newData !== visitedAccountData) {
-      setVisitedAccountData(newData);
+    fetchUserData(id, setVisitedAccountData);
+    if (account) {
+      fetchUserPosts(account, setUserPosts);
     }
-  }, [account, allAccountData]);
+  }, [account, accountData]);
+
+  useEffect(() => {
+    if (visitedAccountData) {
+      setFollowerCount(visitedAccountData.followerCount);
+      setFollowingCount(visitedAccountData.followingCount);
+    }
+  }, [visitedAccountData]);
 
   return (
     <View style={styles.accountContainer}>
       <View style={styles.accountData}>
         <View style={styles.pfpContainer}>
-          <Image
-            source={{ uri: visitedAccountData.pfpUri }}
-            style={styles.pfpImage}
-          />
+          {visitedAccountData && visitedAccountData.pfpUri ? (
+            <Image
+              source={{ uri: visitedAccountData.pfpUri }}
+              style={styles.pfpImage}
+            />
+          ) : (
+            <View style={styles.loadingContainer}>
+              <ActivityIndicator size="large" color="#FFF9D0" />
+            </View>
+          )}
         </View>
         <View style={styles.leftData}>
           <View style={styles.counts}>
@@ -46,25 +82,21 @@ export default function Account() {
               <Text style={styles.infoTitle}>posts</Text>
             </View>
             <View style={styles.infoContainer}>
-              <Text style={styles.infoCount}>
-                {visitedAccountData.followerCount}
-              </Text>
+              <Text style={styles.infoCount}>{followerCount}</Text>
               <Text style={styles.infoTitle}>followers</Text>
             </View>
             <View style={styles.infoContainer}>
-              <Text style={styles.infoCount}>
-                {visitedAccountData.followingCount}
-              </Text>
+              <Text style={styles.infoCount}>{followingCount}</Text>
               <Text style={styles.infoTitle}>following</Text>
             </View>
           </View>
           <View style={styles.followBtnContainer}>
             <Pressable
               style={styles.followBtn}
-              onPress={() => followUser(visitedAccountData.username)}
+              onPress={() => followUser(visitedAccountData._id)}
             >
               <Text>
-                {accountData.following.includes(account)
+                {accountData.following.includes(visitedAccountData._id)
                   ? "Unfollow"
                   : "Follow"}
               </Text>
@@ -73,11 +105,11 @@ export default function Account() {
         </View>
       </View>
       <View style={styles.bio}>
-        <Markdown>{visitedAccountData.bio}</Markdown>
+        <Markdown>{visitedAccountData.bio || ""}</Markdown>
       </View>
       <HomeFeed
         accountData={accountData}
-        posts={visitedAccountData.posts}
+        posts={userPosts}
         showFollow={false}
         followUser={followUser}
         likePost={likePost}
@@ -158,5 +190,11 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 12,
     elevation: 5,
+  },
+  loadingContainer: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "#5AB2FF",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });

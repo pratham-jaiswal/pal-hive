@@ -1,27 +1,43 @@
 import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import HomeFeed from "../components/homeFeed";
 import Markdown from "react-native-markdown-display";
 import { AccountContext } from "../_layout";
+import axios from "axios";
+import serverConfig from "../../server_config";
+
+const fetchUserPosts = async (username, setUserPosts) => {
+  try {
+    const response = await axios.get(
+      `${serverConfig.api_uri}/users/${username}/posts`
+    );
+    setUserPosts(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export default function Profile() {
-  const { accountData, setAccountData, allAccountData, followUser, likePost } =
-    useContext(AccountContext);
+  const { accountData, followUser, likePost } = useContext(AccountContext);
+
+  const [userPosts, setUserPosts] = useState([]);
 
   useEffect(() => {
-    const newData = allAccountData.find(
-      (data) => data.username === accountData.username
-    );
-    if (newData && newData !== accountData) {
-      setAccountData(newData);
+    if (accountData.username) {
+      fetchUserPosts(accountData.username, setUserPosts);
     }
-  }, [accountData, allAccountData]);
+  }, [accountData]);
 
   return (
     <View style={styles.accountContainer}>
       <View style={styles.accountData}>
         <View style={styles.pfpContainer}>
-          <Image source={{ uri: accountData.pfpUri }} style={styles.pfpImage} />
+          {accountData && (
+            <Image
+              source={{ uri: accountData.pfpUri }}
+              style={styles.pfpImage}
+            />
+          )}
         </View>
         <View style={styles.leftData}>
           <View style={styles.counts}>
@@ -45,7 +61,7 @@ export default function Profile() {
       </View>
       <HomeFeed
         accountData={accountData}
-        posts={accountData.posts}
+        posts={userPosts}
         showFollow={false}
         followUser={followUser}
         likePost={likePost}
