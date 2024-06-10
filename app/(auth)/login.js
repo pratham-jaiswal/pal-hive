@@ -31,13 +31,15 @@ export default function Login() {
 
   useEffect(() => {
     const check = async () => {
-      if (!isLoading && !user) {
-        setAccountData({});
-      } else {
-        if (await checkEmailExists(user.email)) {
-          router.replace({ pathname: "/(tabs)" });
+      if (!isLoading) {
+        if (!user) {
+          setAccountData({});
         } else {
-          router.replace({ pathname: "/(auth)/accountSetUp" });
+          if (await checkEmailExists(user.email)) {
+            router.replace({ pathname: "/(tabs)" });
+          } else {
+            router.replace({ pathname: "/(auth)/accountSetUp" });
+          }
         }
       }
     };
