@@ -2,12 +2,51 @@ const express = require("express");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const cors = require("cors");
+const multer = require("multer");
+const fs = require("fs");
+const path = require("path");
+const cloudinary = require("cloudinary").v2;
+
+require("dotenv").config();
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(cors());
 
-mongoose.connect("mongodb://localhost:27017/palhiveDB", {
+function apiKeyCheck(req, res, next) {
+  const apiKey = req.headers["x-api-key"];
+  if (apiKey && apiKey === process.env.API_KEY) {
+    next();
+  } else {
+    res.status(401).json({ error: "Unauthorized" });
+  }
+}
+
+app.use(apiKeyCheck);
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+  secure: true,
+});
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    const tempDir = path.join(__dirname, "temp");
+    if (!fs.existsSync(tempDir)) {
+      fs.mkdirSync(tempDir);
+    }
+    cb(null, tempDir);
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage });
+
+mongoose.connect(`${process.env.MONGODB_URI}/palhiveDB`, {
   family: 4,
 });
 
@@ -34,6 +73,50 @@ const postSchema = new mongoose.Schema({
 
 const User = mongoose.model("User", userSchema);
 const Post = mongoose.model("Post", postSchema);
+
+app.get("/ping", (req, res) => {
+  // Simulate some delay to mimic server response time
+  setTimeout(() => {
+    res.status(200).send("OK");
+  }, 500);
+});
+
+app.post("/upload-cloudinary", upload.single("image"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).send("No file uploaded.");
+    }
+
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: "PalHive",
+      resource_type: "image",
+    });
+
+    if (result && result.public_id) {
+      fs.unlinkSync(req.file.path);
+
+      res.status(200).json({ url: result.secure_url });
+    } else {
+      res.status(500).json({ error: "Upload failed" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: "Upload failed" });
+  }
+});
+
+// Delete image from Cloudinary
+app.delete("/delete-cloudinary/:publicId", async (req, res) => {
+  try {
+    cloudinary.v2.api
+      .delete_resources([`PalHive/${req.params.publicId}`], {
+        type: "upload",
+        resource_type: "image",
+      })
+      .then(res.status(200).json({ message: "Image deleted successfully" }));
+  } catch (error) {
+    res.status(500).json({ error: "Deletion failed" });
+  }
+});
 
 // Check if an email exists
 app.post("/check-email", async (req, res) => {
@@ -123,7 +206,7 @@ app.post("/posts", async (req, res) => {
 // Fetch all posts
 app.get("/posts", async (req, res) => {
   try {
-    const posts = await Post.find().populate('user', 'username pfpUri'); // Populate the 'user' field with 'username' and 'pfpUri'
+    const posts = await Post.find().populate("user", "username pfpUri");
     res.send(posts);
   } catch (error) {
     res.status(500).send(error);
@@ -137,13 +220,15 @@ app.get("/users/:username/posts", async (req, res) => {
     if (!user) {
       return res.status(404).send();
     }
-    const userPosts = await Post.find({ user: user._id }).populate('user', 'username pfpUri'); // Populate the 'user' field with 'username' and 'pfpUri'
+    const userPosts = await Post.find({ user: user._id }).populate(
+      "user",
+      "username pfpUri"
+    ); // Populate the 'user' field with 'username' and 'pfpUri'
     res.send(userPosts);
   } catch (error) {
     res.status(500).send(error);
   }
 });
-
 
 // Fetch all users
 app.get("/users", async (req, res) => {

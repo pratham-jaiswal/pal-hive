@@ -15,7 +15,12 @@ import serverConfig from "../../server_config";
 
 const fetchNotFollowedUserPosts = async (accountData, setPosts) => {
   try {
-    const response = await axios.get(`${serverConfig.api_uri}/posts`);
+    const response = await axios.get(`${serverConfig.api_uri}/posts`, {
+      headers: {
+        "x-api-key": serverConfig.api_key,
+        "Content-Type": "application/json",
+      },
+    });
     const allPosts = response.data;
 
     const notFollowedUserPosts = allPosts.filter(
@@ -32,7 +37,12 @@ const fetchNotFollowedUserPosts = async (accountData, setPosts) => {
 
 const fetchAllUsers = async (setUsers) => {
   try {
-    const response = await axios.get(`${serverConfig.api_uri}/users`);
+    const response = await axios.get(`${serverConfig.api_uri}/users`, {
+      headers: {
+        "x-api-key": serverConfig.api_key,
+        "Content-Type": "application/json",
+      },
+    });
     setUsers(response.data);
   } catch (error) {
     console.error(error);

@@ -10,7 +10,12 @@ import serverConfig from "../../server_config";
 
 const fetchAllUsers = async (setUsers) => {
   try {
-    const response = await axios.get(`${serverConfig.api_uri}/users`);
+    const response = await axios.get(`${serverConfig.api_uri}/users`, {
+      headers: {
+        "x-api-key": serverConfig.api_key,
+        "Content-Type": "application/json",
+      },
+    });
     setUsers(response.data);
   } catch (error) {
     console.error(error);
@@ -19,9 +24,18 @@ const fetchAllUsers = async (setUsers) => {
 
 const checkEmailExists = async (email, setAccountData) => {
   try {
-    const response = await axios.post(`${serverConfig.api_uri}/check-email`, {
-      email,
-    });
+    const response = await axios.post(
+      `${serverConfig.api_uri}/check-email`,
+      {
+        email,
+      },
+      {
+        headers: {
+          "x-api-key": serverConfig.api_key,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     setAccountData(response.data.user || {});
     return response.data.exists;
   } catch (error) {

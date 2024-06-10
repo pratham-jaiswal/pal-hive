@@ -9,7 +9,13 @@ import serverConfig from "../../server_config";
 const fetchUserPosts = async (username, setUserPosts) => {
   try {
     const response = await axios.get(
-      `${serverConfig.api_uri}/users/${username}/posts`
+      `${serverConfig.api_uri}/users/${username}/posts`,
+      {
+        headers: {
+          "x-api-key": serverConfig.api_key,
+          "Content-Type": "application/json",
+        },
+      }
     );
     setUserPosts(response.data);
   } catch (error) {
