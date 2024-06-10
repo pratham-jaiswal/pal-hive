@@ -4,6 +4,8 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  ScrollView,
+  RefreshControl,
 } from "react-native";
 import { useContext, useState, useEffect } from "react";
 import { AccountContext } from "../_layout";
@@ -13,7 +15,11 @@ import HomeFeed from "../components/homeFeed";
 import axios from "axios";
 import serverConfig from "../../server_config";
 
-const fetchNotFollowedUserPosts = async (accountData, setPosts) => {
+const fetchNotFollowedUserPosts = async (
+  accountData,
+  setPosts,
+  setRefreshing
+) => {
   try {
     const response = await axios.get(`${serverConfig.api_uri}/posts`, {
       headers: {
@@ -32,6 +38,8 @@ const fetchNotFollowedUserPosts = async (accountData, setPosts) => {
     setPosts(notFollowedUserPosts);
   } catch (error) {
     console.error(error);
+  } finally {
+    if (setRefreshing) setRefreshing(false);
   }
 };
 
@@ -56,6 +64,7 @@ export default function Search() {
   const [filteredData, setFilteredData] = useState([]);
   const [posts, setPosts] = useState([]);
   const [users, setUsers] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     fetchAllUsers(setUsers);
@@ -81,8 +90,20 @@ export default function Search() {
     }
   }, [accountData]);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchNotFollowedUserPosts(accountData, setPosts, setRefreshing);
+    fetchAllUsers(setUsers);
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ flexGrow: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <TextInput
         style={styles.searchInput}
         value={searchTerm}
@@ -121,10 +142,10 @@ export default function Search() {
           showFollow={true}
           followUser={followUser}
           likePost={likePost}
-          footerMarginBottom={50}
+          footerMarginBottom={0}
         />
       )}
-    </View>
+    </ScrollView>
   );
 }
 

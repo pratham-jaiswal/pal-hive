@@ -1,4 +1,10 @@
-import { View, Text, StyleSheet } from "react-native";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import { AccountContext } from "../_layout";
 import { useContext, useEffect, useState } from "react";
 import { FlashList } from "@shopify/flash-list";
@@ -41,6 +47,7 @@ export default function Notifications() {
 
   const [likes, setLikes] = useState([]);
   const [userPosts, setUserPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (accountData.username) {
@@ -73,8 +80,21 @@ export default function Notifications() {
     fetchLikesData();
   }, [userPosts, serverConfig]);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchUserPosts(accountData.username, setUserPosts).finally(() =>
+      setRefreshing(false)
+    );
+  };
+
   return (
-    <View style={styles.container}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={{ flexGrow: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <FlashList
         data={likes}
         keyExtractor={(item, index) => index.toString()}
@@ -90,7 +110,7 @@ export default function Notifications() {
         )}
         estimatedItemSize={200}
       />
-    </View>
+    </ScrollView>
   );
 }
 

@@ -154,27 +154,27 @@ export default function TabLayout() {
                 ]}
               />
             ),
-            headerRight: () => (
-              <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={() => router.push({ pathname: "/(screens)/chat" })}
-              >
-                <Ionicons
-                  name="chatbox-ellipses"
-                  size={24}
-                  style={{
-                    color: "#FFF9D0",
-                    paddingVertical: 5,
-                    paddingHorizontal: 5,
-                    marginRight: 20,
-                    textAlign: "center",
-                    borderRadius: 25,
-                    marginLeft: "5%",
-                    marginLeft: 5,
-                  }}
-                />
-              </TouchableOpacity>
-            ),
+            // headerRight: () => (
+            //   <TouchableOpacity
+            //     activeOpacity={0.7}
+            //     onPress={() => router.push({ pathname: "/(screens)/chat" })}
+            //   >
+            //     <Ionicons
+            //       name="chatbox-ellipses"
+            //       size={24}
+            //       style={{
+            //         color: "#FFF9D0",
+            //         paddingVertical: 5,
+            //         paddingHorizontal: 5,
+            //         marginRight: 20,
+            //         textAlign: "center",
+            //         borderRadius: 25,
+            //         marginLeft: "5%",
+            //         marginLeft: 5,
+            //       }}
+            //     />
+            //   </TouchableOpacity>
+            // ),
           }}
         />
         <Tabs.Screen

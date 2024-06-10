@@ -1,11 +1,11 @@
-import { View } from "react-native";
+import { RefreshControl, ScrollView, View } from "react-native";
 import { useContext, useEffect, useState } from "react";
 import HomeFeed from "../components/homeFeed";
 import { AccountContext } from "../_layout";
 import axios from "axios";
 import serverConfig from "../../server_config";
 
-const fetchFollowedUserPosts = async (accountData, setPosts) => {
+const fetchFollowedUserPosts = async (accountData, setPosts, setRefreshing) => {
   try {
     const response = await axios.get(`${serverConfig.api_uri}/posts`, {
       headers: {
@@ -22,6 +22,8 @@ const fetchFollowedUserPosts = async (accountData, setPosts) => {
     setPosts(followedUserPosts);
   } catch (error) {
     console.error(error);
+  } finally {
+    setRefreshing(false);
   }
 };
 
@@ -29,15 +31,26 @@ export default function Home() {
   const { accountData, followUser, likePost } = useContext(AccountContext);
 
   const [posts, setPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (accountData) {
-      fetchFollowedUserPosts(accountData, setPosts);
+      fetchFollowedUserPosts(accountData, setPosts, setRefreshing);
     }
   }, [accountData]);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchFollowedUserPosts(accountData, setPosts, setRefreshing);
+  };
+
   return (
-    <View>
+    <ScrollView
+      contentContainerStyle={{ flexGrow: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <HomeFeed
         accountData={accountData}
         posts={posts}
@@ -46,6 +59,6 @@ export default function Home() {
         likePost={likePost}
         footerMarginBottom={0}
       />
-    </View>
+    </ScrollView>
   );
 }

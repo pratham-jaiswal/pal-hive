@@ -1,4 +1,12 @@
-import { View, Text, Image, StyleSheet, Dimensions } from "react-native";
+import {
+  View,
+  Text,
+  Image,
+  StyleSheet,
+  Dimensions,
+  ScrollView,
+  RefreshControl,
+} from "react-native";
 import { useContext, useEffect, useState } from "react";
 import HomeFeed from "../components/homeFeed";
 import Markdown from "react-native-markdown-display";
@@ -6,7 +14,7 @@ import { AccountContext } from "../_layout";
 import axios from "axios";
 import serverConfig from "../../server_config";
 
-const fetchUserPosts = async (username, setUserPosts) => {
+const fetchUserPosts = async (username, setUserPosts, setRefreshing) => {
   try {
     const response = await axios.get(
       `${serverConfig.api_uri}/users/${username}/posts`,
@@ -20,6 +28,8 @@ const fetchUserPosts = async (username, setUserPosts) => {
     setUserPosts(response.data);
   } catch (error) {
     console.error(error);
+  } finally {
+    if (setRefreshing) setRefreshing(false);
   }
 };
 
@@ -27,6 +37,7 @@ export default function Profile() {
   const { accountData, followUser, likePost } = useContext(AccountContext);
 
   const [userPosts, setUserPosts] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
     if (accountData.username) {
@@ -34,8 +45,19 @@ export default function Profile() {
     }
   }, [accountData]);
 
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchUserPosts(accountData.username, setUserPosts, setRefreshing);
+  };
+
   return (
-    <View style={styles.accountContainer}>
+    <ScrollView
+      style={styles.accountContainer}
+      contentContainerStyle={{ flexGrow: 1 }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       <View style={styles.accountData}>
         <View style={styles.pfpContainer}>
           {accountData && (
@@ -71,9 +93,9 @@ export default function Profile() {
         showFollow={false}
         followUser={followUser}
         likePost={likePost}
-        footerMarginBottom={220}
+        footerMarginBottom={0}
       />
-    </View>
+    </ScrollView>
   );
 }
 
