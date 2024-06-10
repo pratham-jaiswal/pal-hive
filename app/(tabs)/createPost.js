@@ -1,5 +1,5 @@
 import { useFocusEffect } from "expo-router";
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import {
   TextInput,
   TouchableOpacity,
@@ -8,11 +8,13 @@ import {
   StyleSheet,
   ScrollView,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 import Markdown from "react-native-markdown-display";
 import { AccountContext } from "../_layout";
 import axios from "axios";
 import serverConfig from "../../server_config";
+import * as ImagePicker from "expo-image-picker";
 
 function CreatePost() {
   const { accountData, setAccountData } = useContext(AccountContext);
@@ -23,11 +25,17 @@ function CreatePost() {
     text: "",
     show: false,
   });
+  const [imageData, setImageData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useFocusEffect(
     useCallback(() => {
       return () => {
         setText("");
+        setSelection({ start: 0, end: 0 });
+        setModal({ text: "", show: false });
+        setImageData([]);
+        setLoading(false);
       };
     }, [])
   );
@@ -53,6 +61,76 @@ function CreatePost() {
     }
   };
 
+  const pickImage = async () => {
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert("Permission to access gallery is required!");
+      return;
+    }
+
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+      base64: false,
+    });
+
+    if (!result.canceled) {
+      setLoading(true);
+      const uri = result.assets[0].uri;
+      const type = result.assets[0].mimeType;
+      const name = result.assets[0].fileName || "photo.jpg";
+
+      const formData = new FormData();
+      formData.append("image", {
+        uri,
+        type,
+        name,
+      });
+
+      try {
+        const response = await axios.post(
+          `${serverConfig.api_uri}/upload-cloudinary`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              "x-api-key": serverConfig.api_key,
+            },
+          }
+        );
+        const imageUrl = response.data.url;
+        const placeholder = `![image-${Date.now()}](${
+          result.assets[0].fileName || "image"
+        })`;
+        setText((prevText) => prevText + "\n" + placeholder + "\n");
+        setImageData((prevData) => ({
+          ...prevData,
+          [placeholder]: imageUrl,
+        }));
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
+  const replacePlaceholdersWithUris = (text, imageData) => {
+    let result = text.trim();
+    for (const placeholder in imageData) {
+      const url = imageData[placeholder];
+      const markdownImage = `${placeholder.slice(
+        0,
+        placeholder.indexOf("(") + 1
+      )}${url})`;
+      result = result.replace(placeholder, markdownImage);
+    }
+    return result;
+  };
+
   const uploadPost = async () => {
     try {
       const newPost = {
@@ -65,7 +143,13 @@ function CreatePost() {
 
       const response = await axios.post(
         `${serverConfig.api_uri}/posts`,
-        newPost
+        newPost,
+        {
+          headers: {
+            "x-api-key": serverConfig.api_key,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       const updatedAccountData = {
@@ -145,14 +229,14 @@ function CreatePost() {
         <View style={styles.buttonsRow}>
           <TouchableOpacity
             style={[styles.button, { flexGrow: 1 }]}
-            onPress={() => addMarkdown("\n![", "](valid_image_url)\n", true)}
+            onPress={pickImage}
           >
             <Text>Image</Text>
           </TouchableOpacity>
         </View>
       </View>
       <View style={styles.preview}>
-        <Markdown>{text}</Markdown>
+        <Markdown>{replacePlaceholdersWithUris(text, imageData)}</Markdown>
       </View>
       <View
         style={[
@@ -223,6 +307,23 @@ function CreatePost() {
               <Text style={{ textAlign: "center", color: "#FFF9D0" }}>Ok</Text>
             </TouchableOpacity>
           </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={loading}
+        onRequestClose={() => {}}
+      >
+        <View
+          style={{
+            backgroundColor: "#00000080",
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator size="large" color="#FFF9D0" />
         </View>
       </Modal>
     </ScrollView>
