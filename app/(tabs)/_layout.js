@@ -300,7 +300,7 @@ export default function TabLayout() {
             headerShadowVisible: false,
             headerRight: () => (
               <View style={styles.iconConatiner}>
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() =>
                     router.push({ pathname: "/(screens)/settings" })
@@ -316,7 +316,7 @@ export default function TabLayout() {
                       textAlign: "center",
                     }}
                   />
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity
                   activeOpacity={0.7}
                   onPress={() => setLogoutModalVisible(true)}
