@@ -17,7 +17,12 @@ import serverConfig from "../../server_config";
 
 const fetchAllUsers = async (setUsers) => {
   try {
-    const response = await axios.get(`${serverConfig.api_uri}/users`);
+    const response = await axios.get(`${serverConfig.api_uri}/users`, {
+      headers: {
+        "x-api-key": serverConfig.api_key,
+        "Content-Type": "application/json",
+      },
+    });
     setUsers(response.data);
   } catch (error) {
     console.error(error);
@@ -90,7 +95,12 @@ export default function AccountSetup() {
     };
 
     try {
-      await axios.post(`${serverConfig.api_uri}/users`, userAccountData);
+      await axios.post(`${serverConfig.api_uri}/users`, userAccountData, {
+        headers: {
+          "x-api-key": serverConfig.api_key,
+          "Content-Type": "application/json",
+        },
+      });
 
       setAccountData(userAccountData);
       router.replace({ pathname: "/(tabs)" });

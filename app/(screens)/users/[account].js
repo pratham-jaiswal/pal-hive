@@ -18,7 +18,13 @@ import serverConfig from "../../../server_config";
 const fetchUserPosts = async (username, setUserPosts) => {
   try {
     const response = await axios.get(
-      `${serverConfig.api_uri}/users/${username}/posts`
+      `${serverConfig.api_uri}/users/${username}/posts`,
+      {
+        headers: {
+          "x-api-key": serverConfig.api_key,
+          "Content-Type": "application/json",
+        },
+      }
     );
     setUserPosts(response.data);
   } catch (error) {
@@ -28,7 +34,12 @@ const fetchUserPosts = async (username, setUserPosts) => {
 
 const fetchUserData = async (id, setVisitedAccountData) => {
   try {
-    const response = await axios.get(`${serverConfig.api_uri}/users/${id}`);
+    const response = await axios.get(`${serverConfig.api_uri}/users/${id}`, {
+      headers: {
+        "x-api-key": serverConfig.api_key,
+        "Content-Type": "application/json",
+      },
+    });
     setVisitedAccountData(response.data);
   } catch (error) {
     console.error(error);
@@ -113,7 +124,7 @@ export default function Account() {
         showFollow={false}
         followUser={followUser}
         likePost={likePost}
-        footerMarginBottom={150}
+        footerMarginBottom={0}
       />
     </View>
   );

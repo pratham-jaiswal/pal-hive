@@ -14,9 +14,18 @@ import serverConfig from "../../server_config";
 
 const checkEmailExists = async (email) => {
   try {
-    const response = await axios.post(`${serverConfig.api_uri}/check-email`, {
-      email,
-    });
+    const response = await axios.post(
+      `${serverConfig.api_uri}/check-email`,
+      {
+        email,
+      },
+      {
+        headers: {
+          "x-api-key": serverConfig.api_key,
+          "Content-Type": "application/json",
+        },
+      }
+    );
     return response.data.exists;
   } catch (error) {
     console.error(error);

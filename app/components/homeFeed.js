@@ -8,7 +8,12 @@ import serverConfig from "../../server_config";
 
 const fetchUserData = async (id) => {
   try {
-    const response = await axios.get(`${serverConfig.api_uri}/users/${id}`);
+    const response = await axios.get(`${serverConfig.api_uri}/users/${id}`, {
+      headers: {
+        "x-api-key": serverConfig.api_key,
+        "Content-Type": "application/json",
+      },
+    });
     return response.data.pfpUri;
   } catch (error) {
     console.error(error);

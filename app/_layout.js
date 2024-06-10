@@ -5,12 +5,14 @@ import config from "../auth0-configuration";
 import { Auth0Provider } from "react-native-auth0";
 import axios from "axios";
 import serverConfig from "../server_config";
+import { ActivityIndicator, View } from "react-native";
 
 SplashScreen.preventAutoHideAsync();
 
 const AccountContext = createContext();
 
 const RootLayout = () => {
+  const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
     async function prepare() {
       try {
@@ -23,6 +25,25 @@ const RootLayout = () => {
     }
 
     prepare();
+  }, []);
+
+  useEffect(() => {
+    async function pingServer() {
+      try {
+        const response = await axios.get(`${serverConfig.api_uri}/ping`, {
+          headers: {
+            "x-api-key": serverConfig.api_key,
+            "Content-Type": "application/json",
+          },
+        });
+
+        setIsLoading(false); // Update loading status once data is fetched
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    pingServer();
   }, []);
 
   const [accountData, setAccountData] = useState();
@@ -42,13 +63,28 @@ const RootLayout = () => {
           : accountData.followingCount + 1,
       };
 
-      await axios.put(`${serverConfig.api_uri}/users/${accountData.username}`, {
-        following: updatedFollowing,
-        followingCount: updatedFollowing.length,
-      });
+      await axios.put(
+        `${serverConfig.api_uri}/users/${accountData.username}`,
+        {
+          following: updatedFollowing,
+          followingCount: updatedFollowing.length,
+        },
+        {
+          headers: {
+            "x-api-key": serverConfig.api_key,
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       const followedUser = await axios.get(
-        `${serverConfig.api_uri}/users/${account}`
+        `${serverConfig.api_uri}/users/${account}`,
+        {
+          headers: {
+            "x-api-key": serverConfig.api_key,
+            "Content-Type": "application/json",
+          },
+        }
       );
 
       const updatedFollowers = followedUser.data.followers.includes(
@@ -64,6 +100,12 @@ const RootLayout = () => {
         {
           followers: updatedFollowers,
           followerCount: updatedFollowers.length,
+        },
+        {
+          headers: {
+            "x-api-key": serverConfig.api_key,
+            "Content-Type": "application/json",
+          },
         }
       );
 
@@ -75,7 +117,12 @@ const RootLayout = () => {
 
   const likePost = async (postId) => {
     try {
-      const response = await axios.get(`${serverConfig.api_uri}/posts`);
+      const response = await axios.get(`${serverConfig.api_uri}/posts`, {
+        headers: {
+          "x-api-key": serverConfig.api_key,
+          "Content-Type": "application/json",
+        },
+      });
       const posts = response.data;
 
       const post = posts.find((p) => p._id === postId);
@@ -95,7 +142,12 @@ const RootLayout = () => {
         likeCount: isLiked ? post.likeCount - 1 : post.likeCount + 1,
       };
 
-      await axios.put(`${serverConfig.api_uri}/posts/${postId}`, updatedPost);
+      await axios.put(`${serverConfig.api_uri}/posts/${postId}`, updatedPost, {
+        headers: {
+          "x-api-key": serverConfig.api_key,
+          "Content-Type": "application/json",
+        },
+      });
 
       const updatedPosts = posts.map((p) =>
         p._id === postId ? updatedPost : p
@@ -109,6 +161,14 @@ const RootLayout = () => {
       console.error(error);
     }
   };
+
+  if (isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#5AB2FF" }}>
+        <ActivityIndicator size="large" color="#FFF9D0" />
+      </View>
+    );
+  }
 
   return (
     <Auth0Provider domain={config.domain} clientId={config.clientId}>
