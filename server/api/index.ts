@@ -33,7 +33,7 @@ cloudinary.config({
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const tempDir = path.join(__dirname, "temp");
+    const tempDir = path.join(__dirname, "../tmp");
     if (!fs.existsSync(tempDir)) {
       fs.mkdirSync(tempDir);
     }
