@@ -128,9 +128,10 @@ function CreatePost() {
 
   const uploadPost = async () => {
     try {
+      const finalText = replacePlaceholdersWithUris(text, imageData);
       const newPost = {
         title: `Post ${accountData.posts.length + 1}`,
-        postText: text,
+        postText: finalText,
         username: accountData.username,
         likedBy: [],
         likeCount: 0,
