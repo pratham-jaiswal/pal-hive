@@ -15,14 +15,21 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "runtimeVersion": {
+        "policy": "appVersion"
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#A0DEFF"
       },
-      "package": "com.maxxdevs.palhive"
+      "package": "com.maxxdevs.palhive",
+      "permissions": [
+        "android.permission.RECORD_AUDIO"
+      ],
+      "runtimeVersion": "1.0.0"
     },
     "web": {
       "bundler": "metro",
@@ -64,6 +71,9 @@
       "eas": {
         "projectId": "90d08e8b-8a56-4f8f-9cdb-f7a749a3df73"
       }
+    },
+    "updates": {
+      "url": "https://u.expo.dev/90d08e8b-8a56-4f8f-9cdb-f7a749a3df73"
     }
   }
 }
