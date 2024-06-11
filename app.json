@@ -3,7 +3,7 @@
     "name": "Pal Hive",
     "slug": "pal-hive",
     "scheme": "pal-hive",
-    "version": "0.5.0",
+    "version": "0.6.0",
     "orientation": "portrait",
     "description": "Easily track daily expenses in multiple languages and currencies.",
     "icon": "./assets/images/icon.png",
@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#A0DEFF"
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
@@ -20,7 +20,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#A0DEFF"
       },
       "package": "com.maxxdevs.palhive"
     },
@@ -35,6 +35,21 @@
         "react-native-auth0",
         {
           "domain": "prathamj-dev.jp.auth0.com"
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "The app accesses your photos to let you share them with your friends."
+        }
+      ],
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "enableProguardInReleaseBuilds": false,
+            "enableShrinkResourcesInReleaseBuilds": false
+          }
         }
       ]
     ],
