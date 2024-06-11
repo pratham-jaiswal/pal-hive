@@ -1,10 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const bodyParser = require("body-parser");
 const cors = require("cors");
-const multer = require("multer");
-const fs = require("fs");
-const path = require("path");
 const cloudinary = require("cloudinary").v2;
 
 require("dotenv").config();
@@ -30,10 +26,6 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
   secure: true,
 });
-
-const storage = multer.memoryStorage();
-
-const upload = multer({ storage });
 
 mongoose.connect(`${process.env.MONGODB_URI}/palhiveDB`, {
   family: 4,
@@ -63,32 +55,31 @@ const postSchema = new mongoose.Schema({
 const User = mongoose.model("User", userSchema);
 const Post = mongoose.model("Post", postSchema);
 
+console.log(process.env.CLOUDINARY_CLOUD_NAME)
+
 app.get("/ping", (req, res) => {
   // Simulate some delay to mimic server response time
   setTimeout(() => {
-    res.status(200).send("OK");
+    res.status(500).send("OK");
   }, 500);
 });
 
-app.post("/upload-cloudinary", upload.single("image"), async (req, res) => {
+app.post("/upload-cloudinary", async (req, res) => {
   try {
-    if (!req.file) {
+    if (!req.body.dataUri) {
       return res.status(400).send("No file uploaded.");
     }
 
-    const result = await cloudinary.uploader.upload(req.file.path, {
+    const result = await cloudinary.uploader.upload(req.body.dataUri, {
       folder: "PalHive",
       resource_type: "image",
     });
 
     if (result && result.public_id) {
-      // fs.unlinkSync(req.file.path);
-
       res.status(200).json({ url: result.secure_url });
-    } else {
-      res.status(500).json({ error: "Upload failed" });
-    }
+    } 
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: "Upload failed" });
   }
 });
