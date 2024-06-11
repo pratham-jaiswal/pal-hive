@@ -74,29 +74,24 @@ function CreatePost() {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       quality: 1,
-      base64: false,
+      base64: true,
     });
 
     if (!result.canceled) {
       setLoading(true);
-      const uri = result.assets[0].uri;
       const type = result.assets[0].mimeType;
-      const name = result.assets[0].fileName || "photo.jpg";
-
-      const formData = new FormData();
-      formData.append("image", {
-        uri,
-        type,
-        name,
-      });
+      const base64 = result.assets[0].base64;
+      const dataUri = `data:${type};base64,${base64}`;
 
       try {
         const response = await axios.post(
           `${serverConfig.api_uri}/upload-cloudinary`,
-          formData,
+          {
+            dataUri
+          },
           {
             headers: {
-              "Content-Type": "multipart/form-data",
+              "Content-Type": "application/json",
               "x-api-key": serverConfig.api_key,
             },
           }
