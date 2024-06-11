@@ -58,10 +58,14 @@ const Post = mongoose.model("Post", postSchema);
 console.log(process.env.CLOUDINARY_CLOUD_NAME)
 
 app.get("/ping", (req, res) => {
-  // Simulate some delay to mimic server response time
-  setTimeout(() => {
-    res.status(500).send("OK");
-  }, 500);
+  try{
+    setTimeout(() => {
+      res.status(200).send("OK");
+    }, 500);}
+  catch (error) {
+    console.error(error);
+    res.status(500);
+  }
 });
 
 app.post("/upload-cloudinary", async (req, res) => {
@@ -94,6 +98,7 @@ app.delete("/delete-cloudinary/:publicId", async (req, res) => {
       })
       .then(res.status(200).json({ message: "Image deleted successfully" }));
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Deletion failed" });
   }
 });
@@ -109,6 +114,7 @@ app.post("/check-email", async (req, res) => {
       res.status(200).json({ user: user, exists: false });
     }
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -134,6 +140,7 @@ app.post("/users", async (req, res) => {
     await user.save();
     res.status(201).send(user);
   } catch (error) {
+    console.error(error);
     res.status(400).send(error);
   }
 });
@@ -154,6 +161,7 @@ app.put("/users/:username", async (req, res) => {
     }
     res.send(user);
   } catch (error) {
+    console.error(error);
     res.status(400).send(error);
   }
 });
@@ -179,6 +187,7 @@ app.post("/posts", async (req, res) => {
 
     res.status(201).send(post);
   } catch (error) {
+    console.error(error);
     res.status(400).send(error);
   }
 });
@@ -189,6 +198,7 @@ app.get("/posts", async (req, res) => {
     const posts = await Post.find().populate("user", "username pfpUri");
     res.send(posts);
   } catch (error) {
+    console.error(error);
     res.status(500).send(error);
   }
 });
@@ -206,6 +216,7 @@ app.get("/users/:username/posts", async (req, res) => {
     ); // Populate the 'user' field with 'username' and 'pfpUri'
     res.send(userPosts);
   } catch (error) {
+    console.error(error);
     res.status(500).send(error);
   }
 });
@@ -216,6 +227,7 @@ app.get("/users", async (req, res) => {
     const users = await User.find();
     res.send(users);
   } catch (error) {
+    console.error(error);
     res.status(500).send(error);
   }
 });
@@ -232,6 +244,7 @@ app.put("/posts/:id", async (req, res) => {
     }
     res.send(post);
   } catch (error) {
+    console.error(error);
     res.status(400).send(error);
   }
 });
