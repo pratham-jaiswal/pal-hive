@@ -1,4 +1,4 @@
-import { Redirect, Tabs, router } from "expo-router";
+import { Tabs, router } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Modal, TouchableOpacity, View, Text } from "react-native";
 import { StyleSheet } from "react-native";
@@ -7,6 +7,7 @@ import { AccountContext } from "../_layout";
 import { useAuth0 } from "react-native-auth0";
 import axios from "axios";
 import serverConfig from "../../server_config";
+import * as Font from "expo-font";
 
 const fetchAllUsers = async (setUsers) => {
   try {
@@ -51,33 +52,45 @@ export default function TabLayout() {
   const [logoutModalVisible, setLogoutModalVisible] = useState(false);
   const [users, setUsers] = useState([]);
 
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {}, []);
+
   useEffect(() => {
-    fetchAllUsers(setUsers);
+    try {
+      fetchAllUsers(setUsers);
+    } catch (error) {
+      console.error(error);
+    }
   }, []);
 
   useEffect(() => {
-    const check = async () => {
-      if (!user) {
-        setAccountData({});
-      } else {
-        if (await checkEmailExists(user.email, setAccountData)) {
-          setLoading(false);
+    try {
+      const check = async () => {
+        if (!user) {
+          setAccountData({});
         } else {
-          router.replace({ pathname: "/(auth)/accountSetUp" });
+          if (await checkEmailExists(user.email, setAccountData)) {
+            setLoading(false);
+          } else {
+            router.replace({ pathname: "/(auth)/accountSetUp" });
+          }
         }
-      }
-    };
+      };
 
-    const isLoggedIn = async () => {
-      const loggedIn = await hasValidCredentials();
-      if (loggedIn) {
-        await check();
-      } else {
-        router.replace({ pathname: "/(auth)/login" });
-      }
-    };
+      const isLoggedIn = async () => {
+        const loggedIn = await hasValidCredentials();
+        if (loggedIn) {
+          await check();
+        } else {
+          router.replace({ pathname: "/(auth)/login" });
+        }
+      };
 
-    isLoggedIn();
+      isLoggedIn();
+    } catch (e) {
+      console.error(e);
+    }
   }, [isLoading, users, user]);
 
   const [username, setUsername] = useState("");
