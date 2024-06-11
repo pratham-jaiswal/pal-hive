@@ -2,14 +2,14 @@
 
 # Pal Hive
 
-Welcome to Pal Hive, the  social media platform designed to build connections and foster communities. Here, you can upload and share your thoughts, follow your friends to stay updated on their activities, and like and engage with posts that resonate with you. Plus, with markdown-based posts, you can create beautifully formatted content. Join Pal Hive today!
+Welcome to Pal Hive, the  social media platform designed to build connections. Here, you can upload and share your thoughts, follow your friends to stay updated on their activities, and like and engage with posts that resonate with you. Plus, with markdown-based posts, you can create beautifully formatted content. Join Pal Hive today!
 
 ## Features
 
 - User-Friendly Interface: Navigate seamlessly through a clean and intuitive design.
 - Post Sharing: Upload and share your thoughts, photos, and updates effortlessly.
 - Friend Connections: Follow your friends to keep up with their latest activities.
-- Engagement: Like, comment, and engage with posts that resonate with you.
+- Engagement: Like posts that resonate with you.
 - Markdown Support: Create beautifully formatted posts with markdown.
 
 ## To Do
