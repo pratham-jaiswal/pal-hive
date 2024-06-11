@@ -31,23 +31,7 @@ cloudinary.config({
   secure: true,
 });
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    var tempDir;
-    if (process.env.DEV && process.env.DEV === 'Yes') {
-      tempDir = path.join(__dirname, `../tmp/`);
-    } else {
-      tempDir = '/tmp/';
-    }
-    if (!fs.existsSync(tempDir)) {
-      fs.mkdirSync(tempDir);
-    }
-    cb(null, tempDir);
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+const storage = multer.memoryStorage();
 
 const upload = multer({ storage });
 
@@ -98,7 +82,7 @@ app.post("/upload-cloudinary", upload.single("image"), async (req, res) => {
     });
 
     if (result && result.public_id) {
-      fs.unlinkSync(req.file.path);
+      // fs.unlinkSync(req.file.path);
 
       res.status(200).json({ url: result.secure_url });
     } else {
