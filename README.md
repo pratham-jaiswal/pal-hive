@@ -2,7 +2,15 @@
 
 # Pal Hive
 
-Pal Hive is a social media platform designed to foster connections and community. Currently in its early stages, focusing on UI development and implementing markdown-based posts with dummy data.
+Welcome to Pal Hive, the  social media platform designed to build connections and foster communities. Here, you can upload and share your thoughts, follow your friends to stay updated on their activities, and like and engage with posts that resonate with you. Plus, with markdown-based posts, you can create beautifully formatted content. Join Pal Hive today!
+
+## Features
+
+- User-Friendly Interface: Navigate seamlessly through a clean and intuitive design.
+- Post Sharing: Upload and share your thoughts, photos, and updates effortlessly.
+- Friend Connections: Follow your friends to keep up with their latest activities.
+- Engagement: Like, comment, and engage with posts that resonate with you.
+- Markdown Support: Create beautifully formatted posts with markdown.
 
 ## To Do
 
@@ -10,12 +18,13 @@ Pal Hive is a social media platform designed to foster connections and community
 - Settings
 
 ## Demo
-![](https://i.imgur.com/C1Ixv6Al.jpg)
-![](https://i.imgur.com/n1Qy4Kjl.jpg)
-![](https://i.imgur.com/hXwp2zll.jpg)
-![](https://i.imgur.com/cgyMTuol.jpg)
-![](https://i.imgur.com/EUTIpmfl.jpg)
-![](https://i.imgur.com/9wfSlLLl.jpg)
+![](https://i.imgur.com/TBaqzmXl.jpg)
+![](https://i.imgur.com/t5PLqWal.jpg)
+![](https://i.imgur.com/AMxHE9ql.jpg)
+![](https://i.imgur.com/kQImqn9l.jpg)
+![](https://i.imgur.com/9EyVaKnl.jpg)
+![](https://i.imgur.com/oDFZssIl.jpg)
+![](https://i.imgur.com/nNE339ll.jpg)
 
 ## Built With
 
