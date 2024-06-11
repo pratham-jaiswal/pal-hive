@@ -1,3 +1,5 @@
+![](https://i.imgur.com/C1cN08k.png)
+
 # Pal Hive
 
 Pal Hive is a social media platform designed to foster connections and community. Currently in its early stages, focusing on UI development and implementing markdown-based posts with dummy data.
