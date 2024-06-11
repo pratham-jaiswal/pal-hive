@@ -85,7 +85,7 @@ export default function AccountSetup() {
       username,
       email: user.email,
       pfpUri: `https://robohash.org/${username}?set=set${pfpSet}`,
-      bio: "Hi, I'm Pratham!",
+      bio: `Hi, I'm ${username}!`,
       followers: [],
       followerCount: 0,
       following: [],
