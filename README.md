@@ -18,7 +18,7 @@ Welcome to Pal Hive, the  social media platform designed to build connections. H
 - Settings
 
 ## Demo
-![](https://i.imgur.com/TBaqzmXl.jpg)
+![](https://i.imgur.com/iqYmcgil.jpg)
 ![](https://i.imgur.com/t5PLqWal.jpg)
 ![](https://i.imgur.com/AMxHE9ql.jpg)
 ![](https://i.imgur.com/kQImqn9l.jpg)
