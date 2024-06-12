@@ -223,7 +223,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="createPost"
           options={{
-            headerTitle: "Notifications",
+            headerTitle: "New Post",
             headerStyle: { backgroundColor: "#5AB2FF" },
             headerTitleStyle: {
               fontFamily: "monospace",
