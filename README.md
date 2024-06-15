@@ -16,6 +16,8 @@ Welcome to Pal Hive, the  social media platform designed to build connections. H
 
 - Chat
 - Settings
+- Follower Following List
+- Add Timestamps
 
 ## Demo
 ![](https://i.imgur.com/iqYmcgil.jpg)
