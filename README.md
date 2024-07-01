@@ -12,14 +12,8 @@ Welcome to Pal Hive, the  social media platform designed to build connections. H
 - Engagement: Like posts that resonate with you.
 - Markdown Support: Create beautifully formatted posts with markdown.
 
-## To Do
-
-- Chat
-- Settings
-- Follower Following List
-- Add Timestamps
-
 ## Demo
+
 ![](https://i.imgur.com/iqYmcgil.jpg)
 ![](https://i.imgur.com/t5PLqWal.jpg)
 ![](https://i.imgur.com/AMxHE9ql.jpg)
@@ -27,6 +21,13 @@ Welcome to Pal Hive, the  social media platform designed to build connections. H
 ![](https://i.imgur.com/9EyVaKnl.jpg)
 ![](https://i.imgur.com/oDFZssIl.jpg)
 ![](https://i.imgur.com/nNE339ll.jpg)
+
+## Just an Idea
+
+- Chat
+- Settings
+- Follower Following List
+- Add Timestamps
 
 ## Built With
 
