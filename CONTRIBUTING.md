@@ -1,5 +1,5 @@
-# Contributing to Xpenzie - The Expense Tracker
-First off, thank you for considering contributing to Xpenzie - The Expense Tracker.
+# Contributing to Pal Hive
+First off, thank you for considering contributing to Pal Hive.
 
 
 ## Where do I go from here?

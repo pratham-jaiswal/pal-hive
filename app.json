@@ -5,7 +5,7 @@
     "scheme": "pal-hive",
     "version": "0.6.0",
     "orientation": "portrait",
-    "description": "Easily track daily expenses in multiple languages and currencies.",
+    "description": "A markdown social media.",
     "icon": "./assets/images/icon.png",
     "userInterfaceStyle": "automatic",
     "splash": {
